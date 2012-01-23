@@ -16,7 +16,8 @@ module Zippo
     def close
     end
     def directory
-      File.open(@filename) { |io| ZipDirectory.new io }
+      io = File.open(@filename)
+      ZipDirectory.new io
     end
   end
 end
