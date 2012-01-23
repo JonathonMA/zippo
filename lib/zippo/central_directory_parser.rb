@@ -1,3 +1,5 @@
+require 'zippo/central_directory_unpacker'
+
 module Zippo
   class CentralDirectoryParser
     SIGNATURE = 0x06054b50
@@ -8,7 +10,7 @@ module Zippo
     end
     def parse_entries
       @io.seek end_of_cd_record_position
-      eocdr = parse_end_of_cd_record @io.read
+      eocdr = CentralDirectoryUnpacker.new(@io.read).unpack
     end
     def end_of_cd_record_position
       # XXX implement optimised scanning at -22 position
