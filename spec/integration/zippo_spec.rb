@@ -12,6 +12,7 @@ module Zippo
         zip.close
       end
       it "should be able to read a member of the file" do
+        pending "CentralDirectoryParser implementation"
         data = zip["test.file"].read
         data.should eq "The quick brown fox jumps over the lazy dog."
       end

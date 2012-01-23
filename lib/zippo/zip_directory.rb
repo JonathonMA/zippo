@@ -9,7 +9,7 @@ module Zippo
       entries.detect {|x| x.name == name }
     end
     def entries
-      [ ZipMember.new ]
+      CentralDirectoryParser.new(@io).parse_entries
     end
   end
 end
