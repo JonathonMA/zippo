@@ -1,7 +1,7 @@
 module Zippo
   class ZipMember
     attr_reader :name
-    def initialize
+    def initialize io, header
       @name = "test.file"
     end
     def read

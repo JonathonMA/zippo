@@ -1,4 +1,5 @@
 require 'zippo/zip_member'
+require 'zippo/central_directory_parser'
 
 module Zippo
   class ZipDirectory
@@ -9,8 +10,9 @@ module Zippo
       entries.detect {|x| x.name == name }
     end
     def entries
-      # XXX just getting tests passing
-      Array.new CentralDirectoryParser.new(@io).end_of_cd_record.total_records, ZipMember.new
+      CentralDirectoryParser.new(@io).cd_file_headers.map do |header|
+        ZipMember.new @io, header
+      end
     end
   end
 end

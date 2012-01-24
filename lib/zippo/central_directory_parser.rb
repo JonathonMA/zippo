@@ -21,5 +21,8 @@ module Zippo
         raise "End of Central Directory Record not found" unless pos
       end
     end
+    def cd_file_headers
+      Array.new end_of_cd_record.total_records
+    end
   end
 end
