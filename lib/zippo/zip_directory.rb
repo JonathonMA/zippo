@@ -10,7 +10,7 @@ module Zippo
     end
     def entries
       # XXX just getting tests passing
-      Array.new CentralDirectoryParser.new(@io).parse_entries.total_records, ZipMember.new
+      Array.new CentralDirectoryParser.new(@io).end_of_cd_record.total_records, ZipMember.new
     end
   end
 end

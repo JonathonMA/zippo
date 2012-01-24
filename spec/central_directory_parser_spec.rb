@@ -10,8 +10,8 @@ module Zippo
 
     context "when parsing a simple file" do
       let(:file) { test_file "test.zip" }
-      it "should parse the Central Directory entries" do
-        parser.parse_entries.total_records.should eq 1
+      it "should parse the End of Central Directory Record" do
+        parser.end_of_cd_record.total_records.should eq 1
       end
 
       specify { parser.end_of_cd_record_position.should eq 0xbf }
@@ -20,7 +20,7 @@ module Zippo
     context "when parsing a file with a comment" do
       let(:file) { test_file "comment.zip" }
       specify { parser.end_of_cd_record_position.should eq 0xbf }
-      specify { parser.parse_entries.comment.should eq "this is a comment to make things tricky" }
+      specify { parser.end_of_cd_record.comment.should eq "this is a comment to make things tricky" }
     end
 
     context "when parsing a multi-entry file" do

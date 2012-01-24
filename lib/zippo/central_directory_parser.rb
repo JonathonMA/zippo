@@ -8,7 +8,7 @@ module Zippo
     def initialize(io)
       @io = io
     end
-    def parse_entries
+    def end_of_cd_record
       @io.seek end_of_cd_record_position
       eocdr = CentralDirectoryUnpacker.new(@io.read).unpack
     end
