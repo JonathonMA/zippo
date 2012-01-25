@@ -16,6 +16,11 @@ module Zippo
         data.should eq "The quick brown fox jumps over the lazy dog.\n"
       end
 
+      it "should read a compressed file" do
+        zip = Zippo::ZipFile.open(test_file("deflate.zip"))
+        zip["weasels.txt"].read.should eq "Methinks it is like a weasel.\n" * 10
+      end
+
       it "should work like File.open" do
         pending
         Zippo.open(file) do |v|
