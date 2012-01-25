@@ -13,7 +13,7 @@ module Zippo
     field :cd_size, 'L'
     field :cd_offset, 'L'
     field :comment_length, 'S', :default => 0
-    field :comment, 'a*', :default => "", :length => :comment_length
+    field :comment, 'a*', :default => "", :size => :comment_length
   end
 
   class CentralDirectoryUnpacker < BinaryUnpacker

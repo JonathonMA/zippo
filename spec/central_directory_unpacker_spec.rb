@@ -7,7 +7,7 @@ module Zippo
     subject { CentralDirectoryUnpacker.new(str).unpack }
 
     context "when it's a simple file" do
-      let(:str) { File.read(test_file("test.zip"))[-22..-1] }
+      let(:str) { File.binread(test_file("test.zip"))[-22..-1] }
 
       specify { subject.comment.should eq "" }
       specify { subject.total_records.should eq 1 }
@@ -15,13 +15,13 @@ module Zippo
     end
 
     context "when it's a multi entry file" do
-      let(:str) { File.read(test_file("multi.zip"))[-22..-1] }
+      let(:str) { File.binread(test_file("multi.zip"))[-22..-1] }
 
       specify { subject.total_records.should eq 2 }
     end
 
     context "when there is a comment" do
-      let(:str) { File.read(test_file("comment.zip"))[-61..-1] }
+      let(:str) { File.binread(test_file("comment.zip"))[-61..-1] }
 
       specify { subject.total_records.should eq 1 }
       specify { subject.comment.should eq "this is a comment to make things tricky" }

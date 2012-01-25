@@ -4,7 +4,7 @@ require 'zippo/zip_file'
 
 module Zippo
   describe ZipDirectory do
-    let(:io) { File.open(file) }
+    let(:io) { File.open(file, "rb:ASCII-8BIT") }
     after(:each) { io.close }
     subject { ZipDirectory.new io }
     context "when reading a simple file" do

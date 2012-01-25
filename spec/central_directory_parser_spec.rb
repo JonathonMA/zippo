@@ -4,7 +4,7 @@ require "zippo/central_directory_parser"
 
 module Zippo
   describe CentralDirectoryParser do
-    let(:io) { File.open(file) }
+    let(:io) { File.open(file, "rb:ASCII-8BIT") }
     let(:parser) { CentralDirectoryParser.new(io) }
     after(:each) { io.close }
 

@@ -1,11 +1,20 @@
 module Zippo
   class ZipMember
-    attr_reader :name
     def initialize io, header
-      @name = "test.file"
+      @io = io
+      @header = header
+    end
+    def name
+      @header.name
     end
     def read
-      "The quick brown fox jumps over the lazy dog."
+      compressed_member_data
+    end
+    def compressed_member_data
+      @io.seek @header.local_file_header_offset
+      @lfh ||= LocalFileHeaderUnpacker.new(@io).unpack
+      @io.seek @header.local_file_header_offset + @lfh.size
+      @io.read @header.compressed_size
     end
   end
 end

@@ -13,7 +13,7 @@ module Zippo
       end
       it "should be able to read a member of the file" do
         data = zip["test.file"].read
-        data.should eq "The quick brown fox jumps over the lazy dog."
+        data.should eq "The quick brown fox jumps over the lazy dog.\n"
       end
 
       it "should work like File.open" do
