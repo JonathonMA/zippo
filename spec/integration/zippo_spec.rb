@@ -5,7 +5,7 @@ require 'zippo/zip_file'
 module Zippo
   describe ZipFile do
     let(:file) { test_file "test.zip" }
-    let(:member_data) { "The quick brown fox jumps over the lazy dog." }
+    let(:member_data) { "The quick brown fox jumps over the lazy dog.\n" }
     let(:zip) { Zippo::ZipFile.open(file) }
     describe "when reading a zip file" do
       after(:each) do
@@ -13,7 +13,7 @@ module Zippo
       end
       it "should be able to read a member of the file" do
         data = zip["test.file"].read
-        data.should eq "The quick brown fox jumps over the lazy dog.\n"
+        data.should eq member_data
       end
 
       it "should read a compressed file" do
@@ -22,10 +22,11 @@ module Zippo
       end
 
       it "should work like File.open" do
-        pending
-        Zippo.open(file) do |v|
-          v['test.file'].read
-        end.should eq "The quick brown fox jumps over the lazy dog."
+        io = File.open(file)
+        File.should_receive(:open).with(file).and_return(io)
+        s = Zippo::ZipFile.open(file) { |v| v['test.file'].read }
+        s.should eq member_data
+        io.should be_closed
       end
     end
   end
