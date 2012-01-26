@@ -28,6 +28,16 @@ module Zippo
         s.should eq member_data
         io.should be_closed
       end
+
+      it "should create zip files" do
+        pending "implement zip writing"
+        in_working_directory do
+          File.write "xyzzy.txt", "plugh"
+          Zippo.open("new.zip", "w") {|v| v['xyzzy.txt'] = "plugh" }
+          File.new("new.zip").should exist
+          Zippo.open("new.zip") {|v| v['xyzzy.txt'].read }.should eq "plugh"
+        end
+      end
     end
   end
 end
