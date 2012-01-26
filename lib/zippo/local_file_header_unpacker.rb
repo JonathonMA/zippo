@@ -1,3 +1,5 @@
+require 'zippo/binary_structure'
+
 module Zippo
   class LocalFileHeader < BinaryStructure
     SIGNATURE = 0x04034b50

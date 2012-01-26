@@ -1,6 +1,6 @@
 require "spec_helper"
 
-require "zippo/deflate_uncompressor"
+require "zippo/uncompressor/deflate"
 
 module Zippo
   describe DeflateUncompressor do

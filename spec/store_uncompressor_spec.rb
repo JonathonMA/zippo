@@ -1,6 +1,6 @@
 require "spec_helper"
 
-require "zippo/store_uncompressor"
+require "zippo/uncompressor/store"
 
 module Zippo
   describe StoreUncompressor do

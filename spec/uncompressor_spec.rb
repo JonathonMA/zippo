@@ -1,6 +1,7 @@
 require "spec_helper"
 
 require "zippo/uncompressor"
+require "zippo/uncompressors"
 
 module Zippo
   describe Uncompressor do

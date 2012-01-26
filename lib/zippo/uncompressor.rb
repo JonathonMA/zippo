@@ -24,6 +24,3 @@ module Zippo
     end
   end
 end
-
-require 'zippo/store_uncompressor'
-require 'zippo/deflate_uncompressor'

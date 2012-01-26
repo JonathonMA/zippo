@@ -1,3 +1,6 @@
+require 'zippo/local_file_header_unpacker'
+require 'zippo/uncompressor'
+
 module Zippo
   class ZipMember
     def initialize io, header

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-require 'zippo/zip_file'
+require 'zippo'
 
 module Zippo
   describe ZipFile do
@@ -24,7 +24,7 @@ module Zippo
       it "should work like File.open" do
         io = File.open(file)
         File.should_receive(:open).with(file).and_return(io)
-        s = Zippo::ZipFile.open(file) { |v| v['test.file'].read }
+        s = Zippo.open(file) { |v| v['test.file'].read }
         s.should eq member_data
         io.should be_closed
       end
