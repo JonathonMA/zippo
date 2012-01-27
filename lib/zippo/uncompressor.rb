@@ -10,9 +10,7 @@ module Zippo
     protected :read
     @@uncompressors = []
     def self.uncompressors
-      @@uncompressors_by_method ||= Hash.new.tap do |hash|
-        @@uncompressors.each {|u| hash[u::METHOD] = u}
-      end
+      @@uncompressors_hash ||= Hash[@@uncompressors.map{|u| [u::METHOD, u]}]
     end
     def self.for(method)
       return uncompressors[method] if uncompressors[method]
