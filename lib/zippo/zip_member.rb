@@ -7,11 +7,16 @@ module Zippo
       @io = io
       @header = header
     end
+    def self.with_name_and_data name, data
+      header = CdFileHeader.new
+      header.name = name
+      new(nil, header)
+    end
     def name
       @header.name
     end
     def read
-      @io.seek @header.local_file_header_offset + local_file_header.size
+      seek_to_compressed_data
       uncompressor.uncompress
     end
     def local_file_header
@@ -22,10 +27,11 @@ module Zippo
       Uncompressor.for(@header.compression_method).new(@io, @header.compressed_size)
     end
     def compressed_member_data
-      @io.seek @header.local_file_header_offset
-      @lfh ||= LocalFileHeaderUnpacker.new(@io).unpack
-      @io.seek @header.local_file_header_offset + @lfh.size
+      seek_to_compressed_data
       @io.read @header.compressed_size
+    end
+    def seek_to_compressed_data
+      @io.seek @header.local_file_header_offset + local_file_header.size
     end
   end
 end

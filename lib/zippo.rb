@@ -4,8 +4,8 @@ require 'zippo/uncompressors'
 
 module Zippo
   class << self
-    def open filename, &block
-      Zippo::ZipFile.open filename, &block
+    def open filename, mode = 'r', &block
+      Zippo::ZipFile.open filename, mode, &block
     end
     public :open
   end

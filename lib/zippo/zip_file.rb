@@ -2,23 +2,31 @@ require 'zippo/zip_directory'
 
 module Zippo
   class ZipFile
-    def self.open(filename)
+    def self.open(filename, mode = 'r')
       if block_given?
-        zippo = new(filename)
+        zippo = new(filename, mode)
         a = yield zippo
         zippo.close
         return a
       else
-        new filename
+        new filename, mode
       end
     end
 
-    def initialize(filename)
+    def read?
+      @mode.include? 'r'
+    end
+
+    def initialize(filename, mode)
       @filename = filename
+      @mode = mode
     end
 
     def [](member_name)
       directory[member_name]
+    end
+    def []= member_name, member_data
+      directory.insert_zip_member member_name, member_data
     end
     def io
       @io ||= File.open(@filename)
@@ -27,7 +35,11 @@ module Zippo
       @io.close if @io
     end
     def directory
-      ZipDirectory.new io
+      @directory ||= if read?
+        ZipDirectory.new io
+      else
+        ZipDirectory.new
+      end
     end
   end
 end

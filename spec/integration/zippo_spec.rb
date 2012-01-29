@@ -30,7 +30,7 @@ module Zippo
       end
 
       it "should create zip files" do
-        pending "implement zip writing"
+        pending
         in_working_directory do
           File.write "xyzzy.txt", "plugh"
           Zippo.open("new.zip", "w") {|v| v['xyzzy.txt'] = "plugh" }
@@ -38,6 +38,8 @@ module Zippo
           Zippo.open("new.zip") {|v| v['xyzzy.txt'].read }.should eq "plugh"
         end
       end
+
+      pending "should update in place with mode rw"
     end
   end
 end

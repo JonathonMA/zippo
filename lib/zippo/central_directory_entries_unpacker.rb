@@ -23,6 +23,7 @@ module Zippo
     field :name, 'a*', :size => :file_name_length
     field :extra_field, 'a*', :size => :extra_field_length, :default => ''
     field :comment, 'a*', :default => '', :size => :file_comment_length, :default => ''
+    attr_writer :name # XXX refactor writable fields into BinaryStructure
   end
   class CdFileHeaderUnpacker < BinaryUnpacker
     unpacks CdFileHeader

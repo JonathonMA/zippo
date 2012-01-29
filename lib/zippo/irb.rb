@@ -1,0 +1,2 @@
+require 'zippo'
+include Zippo

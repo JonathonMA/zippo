@@ -18,5 +18,11 @@ module Zippo
       member = ZipMember.new cio, cheader
       member.read.should eq "Methinks it is like a weasel.\n" * 10
     end
+    describe ".with_name_and_data" do
+      it "should initialse correctly" do
+        member = ZipMember.with_name_and_data "name", "data"
+        member.name.should eq "name"
+      end
+    end
   end
 end

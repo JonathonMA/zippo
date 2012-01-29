@@ -11,12 +11,17 @@ module Zippo
       let(:file) { test_file "test.zip" }
       it { should have(1).entries }
       specify { subject["test.file"].should_not be_nil }
+      it { should_not be_empty }
     end
     context "when reading a larger zip" do
       let(:file) { test_file "multi.zip" }
       it { should have(2).entries }
       specify { subject["test.file"].should_not be_nil }
       specify { subject["other.test"].should_not be_nil }
+    end
+    ## context?
+    pending "should allow the insertion of new members" do
+      #subject.insert_zip_member "new.file", "file data"
     end
   end
 end
