@@ -6,6 +6,7 @@ module Zippo
   class ZipDirectory
     extend Forwardable
     def_delegator :entries, :empty?
+    def_delegator :entries, :each
     def initialize io = nil
       @io = io
     end
