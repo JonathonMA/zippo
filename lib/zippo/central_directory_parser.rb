@@ -20,7 +20,7 @@ module Zippo
       @io = io
     end
     def end_of_cd_record
-      CentralDirectoryUnpacker.new(read_from end_of_cd_record_position).unpack
+      EndCdRecord.unpacker.new(read_from end_of_cd_record_position).unpack
     end
     def end_of_cd_record_position
       # XXX implement optimised scanning at -22 position

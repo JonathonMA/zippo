@@ -1,123 +1,130 @@
-# XXX unspec'd
 module Zippo
-  class BinaryStructureMember < Struct.new :name, :code, :options
-    def variable?
-      options[:size]
-    end
-    def variable_string?
-      code == 'a*'
-    end
-    def width
-      case code
-      when 'L' then 4
-      when 'S' then 2
-      when /^a(\d+)$/ then $1
-      end
-    end
-  end
-  class BinaryStructure
-    class << self
-      attr_reader :fields
-      def field name, code, options = {}
-        @fields ||= {}
-        @fields[name] = BinaryStructureMember.new(name, code, options)#[code, options]
-        attr_reader name
-
-        raise "size not found" if options[:size] && ! @fields[options[:size]]
-      end
-
-      def unpack_code
-        "".tap do |buf|
-          @fields.each do |name, field|
-            buf << field.code
-          end
-        end
-      end
-      def field_groups
-        [[]].tap do |groups|
-          @fields.each do |name, field|
-            if field.variable?
-              groups << [field]
-            else
-              groups.last << field
-            end
-          end
-        end
-      end
-      def unpack_codes
-        field_groups.map do |group|
-          group.map do |f|
-            f.code
-          end
-        end
-      end
-      def sizes
-        [[]].tap do |groups|
-          @fields.each do |name, field|
-            if field.variable?
-            end
-          end
-        end
-      end
-      def unpack_from values, fields = @fields.keys, obj = new
-        fields.zip(values).each do |field, value|
-          obj.instance_variable_set "@#{field}", value
-        end
-      end
-      def variable_size(obj)
-        fields.values.select(&:variable?).map{|x| obj.send(x.options[:size])}.inject(&:+)
-      end
-      def fixed_size
-        fields.values.reject(&:variable?).map(&:width).inject(&:+)
-      end
-    end
-    def size
-      self.class.fixed_size +
-      self.class.variable_size(self)
-    end
-  end
   class BinaryUnpacker
     class << self
-      attr_reader :klass
-      def unpacks klass
-        @klass = klass
-      end
+      attr_accessor :structure
     end
 
-    def initialize(input)
-      if input.is_a? String
-        @io = StringIO.new input
-      else
-        @io = input
-      end
-    end
-
-    def klass
-      self.class.klass
+    def initialize(io)
+      @io = io
+      @io = StringIO.new @io if @io.is_a? String
     end
 
     def unpack
-      obj = klass.new
-      fbuf = []
-      # iterate over the fields, gathering up the fixed fields in a
-      # group. once a variable field is hit, unpack the current group of
-      # fixed fields, then use that to read any variable fields. repeat.
-      klass.fields.values.each do |field|
-        if field.variable?
-          # unpack fixed group
-          unless fbuf.empty?
-            s = fbuf.map(&:width).inject(:+)
-            arr = @io.read(s).unpack fbuf.map(&:code).join('')
-            klass.unpack_from arr, fbuf.map(&:name), obj
+      # XXX - group fixed fields
+      self.class.structure.owner_class.new.tap do |obj|
+        self.class.structure.fields.each do |field|
+          if field.options[:size]
+            obj.instance_variable_set "@#{field.name}", @io.read(obj.send field.options[:size])
+          else
+            buf = @io.read field.width
+            obj.instance_variable_set "@#{field.name}", buf.unpack(field.pack).first
           end
-          # unpack variable
-          obj.instance_variable_set "@#{field.name}", @io.read(obj.send(field.options[:size]))
-          fbuf = []
-        else
-          fbuf << field
         end
       end
-      return obj
     end
   end
+  class BinaryPacker
+    class << self
+      attr_accessor :structure
+    end
+
+    def initialize(io)
+      @io = io
+    end
+
+    def pack obj
+      @io << self.class.structure.fields.map {|f| obj.send f.name}.pack(self.class.structure.fields.map(&:pack).join(""))
+    end
+  end
+  module BinaryStructure
+    def binary_structure &block
+      @structure = Structure.create(self, &block)
+      @unpacking_class = Class.new BinaryUnpacker
+      @unpacking_class.structure = @structure
+      @packing_class = Class.new BinaryPacker
+      @packing_class.structure = @structure
+      @structure.fields.each do |field|
+        attr_reader field.name
+        if @structure.dependent? field.name
+          define_method "#{field.name}=" do |value|
+            raise "can't mutate a dependent field"
+          end
+        else
+          if dependent_field = field.dependent
+            define_method "#{field.name}=" do |value|
+              instance_variable_set "@#{dependent_field}", value.size
+              instance_variable_set "@#{field.name}", value
+            end
+          else
+            define_method "#{field.name}=" do |value|
+              instance_variable_set "@#{field.name}", value
+            end
+          end
+        end
+      end
+      define_method :size do
+        self.class.structure.fields.map do |field|
+          if field.dependent
+            send field.dependent
+          else
+            field.width
+          end
+        end.inject(&:+)
+      end
+      singleton_class.class_eval do
+        define_method :unpacker do
+          @unpacking_class
+        end
+        define_method :packer do
+          @packing_class
+        end
+      end
+    end
+    attr_reader :structure
+  end
+  class StructureMember
+    def initialize(name, pack, options = {})
+      @name = name
+      @pack = pack
+      @options = options
+    end
+    # unspec
+    def dependent
+      options[:size]
+    end
+    # unspec
+    def width
+      case @pack
+      when 'L' then 4
+      when 'S' then 2
+      when /^a(\d+)$/ then $1
+      when 'a*' then nil
+      end
+    end
+    attr_reader :name, :pack, :options
+  end
+  class Structure
+    def self.create(owner_class, &block)
+      structure = new(owner_class, &block)
+      structure
+    end
+    def initialize(owner_class, &block)
+      @fields = []
+      @owner_class = owner_class
+      instance_eval &block
+    end
+    def field name, pack, options = {}
+      @fields << StructureMember.new(name, pack, options)
+    end
+    def dependent? field_name
+      fields.detect do |field|
+        field.options[:size] == field_name
+      end
+    end
+    attr_reader :fields, :owner_class
+  end
+end
+
+Class.class_eval do
+  include Zippo::BinaryStructure
 end

@@ -21,7 +21,7 @@ module Zippo
     end
     def local_file_header
       @io.seek @header.local_file_header_offset
-      LocalFileHeaderUnpacker.new(@io).unpack
+      LocalFileHeader.unpacker.new(@io).unpack
     end
     def uncompressor
       Uncompressor.for(@header.compression_method).new(@io, @header.compressed_size)
