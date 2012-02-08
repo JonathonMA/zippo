@@ -26,10 +26,10 @@ module Zippo
       directory[member_name]
     end
     def []= member_name, member_data
-      directory.insert_zip_member member_name, member_data
+      directory[member_name] = member_data
     end
     def io
-      @io ||= File.open(@filename)
+      @io ||= File.open(@filename, 'r:ASCII-8BIT')
     end
     def close
       @io.close if @io

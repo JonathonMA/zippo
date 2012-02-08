@@ -10,12 +10,25 @@ module Zippo
     def initialize io = nil
       @io = io
     end
+
     def [](name)
       entries.detect {|x| x.name == name }
     end
-    def insert_zip_member name, data
-      entries << ZipMember.with_name_and_data(name, data)
+
+    def []=(name, string)
+      insert(name, StringIO.new(string))
     end
+
+    def insert(name, source)
+      if source.is_a? ZipMember
+        entries << source.with_name(name)
+      elsif source.is_a? String
+        entries << IOZipMember.new(name, File.open(source))
+      else
+        entries << IOZipMember.new(name, source)
+      end
+    end
+
     def entries
       @entries ||= if @io
         CentralDirectoryParser.new(@io).cd_file_headers.map do |header|

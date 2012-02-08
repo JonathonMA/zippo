@@ -23,7 +23,7 @@ module Zippo
 
       it "should work like File.open" do
         io = File.open(file)
-        File.should_receive(:open).with(file).and_return(io)
+        File.should_receive(:open).with(file, 'r:ASCII-8BIT').and_return(io)
         s = Zippo.open(file) { |v| v['test.file'].read }
         s.should eq member_data
         io.should be_closed
@@ -34,7 +34,7 @@ module Zippo
         in_working_directory do
           File.write "xyzzy.txt", "plugh"
           Zippo.open("new.zip", "w") {|v| v['xyzzy.txt'] = "plugh" }
-          File.new("new.zip").should exist
+          Pathname.new("new.zip").should exist
           Zippo.open("new.zip") {|v| v['xyzzy.txt'].read }.should eq "plugh"
         end
       end

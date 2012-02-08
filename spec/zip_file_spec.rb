@@ -24,6 +24,7 @@ module Zippo
         it "should allow the insertion of a new ZipMember" do
           zip['new.file'] = "foo"
         end
+        pending "should write the file when closed"
       end
       context "when in update mode" do
         let(:mode) { "rw" }
