@@ -8,13 +8,18 @@ module Zippo
   describe ZipFileWriter do
     describe ".write" do
       it "should write the zip file" do
-        pending
         in_working_directory do
           directory = ZipDirectory.new
-          directory.insert_zip_member "file.ext", "foo"
+          directory["file.ext"] = "foo"
           writer = ZipFileWriter.new directory, "out.zip"
           writer.write
-          Zippo.open("out.zip") { |f| f['file.ext'].read }.should eq "foo"
+          File.open("/home/jma/yay.zip","w") {|f| f.write File.read("out.zip") }
+          Zippo.open("out.zip") do |f|
+            f['file.ext'].crc32.should eq 0x8c736521
+            f['file.ext'].compressed_size.should eq 3
+            f['file.ext'].uncompressed_size.should eq 3
+            f['file.ext'].read.should eq "foo"
+          end
         end
       end
     end

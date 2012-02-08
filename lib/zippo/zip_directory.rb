@@ -5,6 +5,7 @@ require 'forwardable'
 module Zippo
   class ZipDirectory
     extend Forwardable
+    include Enumerable
     def_delegator :entries, :empty?
     def_delegator :entries, :each
     def initialize io = nil

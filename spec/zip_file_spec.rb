@@ -18,13 +18,20 @@ module Zippo
       end
       context "when in write mode" do
         let(:mode) { "w" }
+        let(:file) { "/tmp/foo.zip" }
         it "should not allow reading of zip members that haven't been written" do
           zip['test.file'].should be_nil
         end
-        it "should allow the insertion of a new ZipMember" do
-          zip['new.file'] = "foo"
+        context "when a member is inserted" do
+          before(:each) do
+            zip['new.file'] = "foo"
+          end
+          it "should write the file when closed" do
+            zip.close
+            Pathname.new(file).should exist
+            Zippo.open(file) {|f| f["new.file"].read }.should eq "foo"
+          end
         end
-        pending "should write the file when closed"
       end
       context "when in update mode" do
         let(:mode) { "rw" }

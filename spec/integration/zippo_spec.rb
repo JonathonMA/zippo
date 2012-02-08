@@ -30,7 +30,6 @@ module Zippo
       end
 
       it "should create zip files" do
-        pending
         in_working_directory do
           File.write "xyzzy.txt", "plugh"
           Zippo.open("new.zip", "w") {|v| v['xyzzy.txt'] = "plugh" }

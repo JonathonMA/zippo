@@ -17,6 +17,10 @@ module Zippo
       @mode.include? 'r'
     end
 
+    def write?
+      @mode.include? 'w'
+    end
+
     def initialize(filename, mode)
       @filename = filename
       @mode = mode
@@ -33,6 +37,10 @@ module Zippo
     end
     def close
       @io.close if @io
+      if write?
+        writer = ZipFileWriter.new directory, @filename
+        writer.write
+      end
     end
     def directory
       @directory ||= if read?

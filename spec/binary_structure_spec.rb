@@ -69,6 +69,25 @@ module Zippo
         obj.quux = "foobar baz"
         obj.size.should eq 16
       end
+      context "when there is another class" do
+        let(:other_klass) { Class.new }
+        before(:each) do
+          other_klass.send :extend, BinaryStructure
+          other_klass.class_eval do
+            binary_structure do
+              field :bar, 'S'
+            end
+          end
+        end
+        describe ".convert_to" do
+          it "should convert to the other class" do
+            obj.quux = "foobar"
+            obj.bar = 5
+            other_obj = obj.convert_to other_klass
+            other_obj.bar.should eq 5
+          end
+        end
+      end
     end
 =begin
     it "should complain if the order is bad" do

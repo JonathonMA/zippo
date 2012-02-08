@@ -1,6 +1,8 @@
 require 'zippo/local_file_header_unpacker'
 require 'zippo/uncompressor'
 
+require 'forwardable'
+
 module Zippo
   class ZipMember
     def self.with_name_and_data name, data
@@ -17,6 +19,9 @@ module Zippo
     def name
       @name ||= @header.name
     end
+
+    extend Forwardable
+    def_delegators :@header, :crc32, :compressed_size, :uncompressed_size
 
     def read
       seek_to_compressed_data

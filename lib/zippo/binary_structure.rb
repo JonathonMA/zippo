@@ -62,7 +62,11 @@ module Zippo
           end
         end
       end
-      define_method :size do
+      include InstanceMethods
+      extend ClassMethods
+    end
+    module InstanceMethods
+      def size
         self.class.structure.fields.map do |field|
           if field.dependent
             send field.dependent
@@ -71,16 +75,30 @@ module Zippo
           end
         end.inject(&:+)
       end
-      singleton_class.class_eval do
-        define_method :unpacker do
-          @unpacking_class
-        end
-        define_method :packer do
-          @packing_class
+      def convert_to other
+        other.default.tap do |obj|
+          (self.class.structure.fields.map(&:name) & other.structure.fields.map(&:name)).each do |field|
+            obj.instance_variable_set "@#{field}", send(field)
+          end
         end
       end
     end
-    attr_reader :structure
+    module ClassMethods
+      attr_reader :structure
+      def default
+        new.tap do |obj|
+          structure.fields.each do |field|
+            obj.instance_variable_set "@#{field.name}", field.options[:default] if field.options[:default]
+          end
+        end
+      end
+      def packer
+        @packing_class
+      end
+      def unpacker
+        @unpacking_class
+      end
+    end
   end
   class StructureMember
     def initialize(name, pack, options = {})
