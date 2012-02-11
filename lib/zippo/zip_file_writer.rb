@@ -5,7 +5,7 @@ module Zippo
       @filename = filename
     end
     def write
-      File.open(@filename,'w:ASCII-8BIT') do |io|
+      File.open(@filename,'wb:ASCII-8BIT') do |io|
 
         packer = LocalFileHeader.packer.new io
         headers = @directory.map do |member|

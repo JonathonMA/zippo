@@ -25,7 +25,7 @@ module Zippo
     def end_of_cd_record_position
       # XXX implement optimised scanning at -22 position
       scan_size = [@io.size, MAX_COMMENT_LENGTH].min
-      read_from(-scan_size).rindex(PACKED_SIGNATURE).tap do |pos|
+      (@io.size - scan_size) + read_from(-scan_size).rindex(PACKED_SIGNATURE).tap do |pos|
         raise "End of Central Directory Record not found" unless pos
       end
     end

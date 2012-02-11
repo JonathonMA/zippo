@@ -1,4 +1,5 @@
 require 'zippo/zip_member'
+require 'zippo/io_zip_member'
 require 'zippo/central_directory_parser'
 require 'forwardable'
 
@@ -24,7 +25,7 @@ module Zippo
       if source.is_a? ZipMember
         entries << source.with_name(name)
       elsif source.is_a? String
-        entries << IOZipMember.new(name, File.open(source))
+        entries << IOZipMember.new(name, File.open(source, 'r:ASCII-8BIT'))
       else
         entries << IOZipMember.new(name, source)
       end

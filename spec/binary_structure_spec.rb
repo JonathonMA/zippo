@@ -17,15 +17,16 @@ module Zippo
         klass.class_eval do
           binary_structure do
             field :foo, 'L'
+            field :yay, 'a4', :signature => "baz"
             field :bar, 'S'
             field :quux, 'a*', :size => :foo
           end
         end
       end
       it "should store field information in the class" do
-        klass.structure.should have(3).fields
+        klass.structure.should have(4).fields
         klass.structure.fields[0].name.should eq :foo
-        klass.structure.fields[2].options[:size].should eq :foo
+        klass.structure.fields[3].options[:size].should eq :foo
       end
       it "should have dependent fields" do
         obj.quux = "foobar"
@@ -40,8 +41,8 @@ module Zippo
         obj.bar.should eq 10
       end
       it "should have an unpacker" do
-        array = [10,42,"foobar baz"]
-        packed = array.pack 'LSa*'
+        array = [10,"baz", 42,"foobar baz"]
+        packed = array.pack 'La4Sa*'
         io = StringIO.new packed
         obj = klass.unpacker.new(io).unpack
         obj.foo.should eq 10
@@ -49,17 +50,18 @@ module Zippo
         obj.quux.should eq "foobar baz"
       end
       it "should unpack oversized strings correctly" do
-        array = [3,42,"foobar baz"]
-        packed = array.pack 'LSa*'
+        array = [3,"baz", 42,"foobar baz"]
+        packed = array.pack 'La4Sa*'
         io = StringIO.new packed
         obj = klass.unpacker.new(io).unpack
         obj.quux.should eq "foo"
       end
       it "should have a packer" do
-        array = [10,42,"foobar baz"]
-        packed = array.pack 'LSa*'
+        array = [10,"baz", 42,"foobar baz"]
+        packed = array.pack 'La4Sa*'
         io = StringIO.new
         obj.bar = 42
+        obj.yay = "baz"
         obj.quux = "foobar baz"
         klass.packer.new(io).pack obj
         io.string.should eq packed
@@ -67,7 +69,7 @@ module Zippo
       it "should have a .size method" do
         obj.bar = 42
         obj.quux = "foobar baz"
-        obj.size.should eq 16
+        obj.size.should eq 20
       end
       context "when there is another class" do
         let(:other_klass) { Class.new }
@@ -76,6 +78,7 @@ module Zippo
           other_klass.class_eval do
             binary_structure do
               field :bar, 'S'
+              field :yay, 'a4', :signature => "quux"
             end
           end
         end
@@ -85,6 +88,14 @@ module Zippo
             obj.bar = 5
             other_obj = obj.convert_to other_klass
             other_obj.bar.should eq 5
+          end
+          it "should not convert a signature" do
+            obj.quux = "foobar"
+            obj.bar = 5
+            obj.yay = "baz"
+            other_obj = obj.convert_to other_klass
+            other_obj.bar.should eq 5
+            other_obj.yay.should eq "quux"
           end
         end
       end

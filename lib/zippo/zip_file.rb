@@ -1,4 +1,5 @@
 require 'zippo/zip_directory'
+require 'zippo/zip_file_writer'
 
 module Zippo
   class ZipFile
@@ -11,6 +12,10 @@ module Zippo
       else
         new filename, mode
       end
+    end
+
+    def map &block
+      directory.map &block
     end
 
     def read?

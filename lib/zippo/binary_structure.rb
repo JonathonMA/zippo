@@ -1,3 +1,5 @@
+require 'stringio'
+
 module Zippo
   class BinaryUnpacker
     class << self
@@ -78,7 +80,11 @@ module Zippo
       def convert_to other
         other.default.tap do |obj|
           (self.class.structure.fields.map(&:name) & other.structure.fields.map(&:name)).each do |field|
-            obj.instance_variable_set "@#{field}", send(field)
+            if (fs = obj.class.structure.fields.detect {|f| f.name == field}).options[:signature]
+              obj.instance_variable_set "@#{field}", fs.options[:signature]
+            else
+              obj.instance_variable_set "@#{field}", send(field)
+            end
           end
         end
       end
@@ -106,16 +112,16 @@ module Zippo
       @pack = pack
       @options = options
     end
-    # unspec
+    # XXX unspec
     def dependent
       options[:size]
     end
-    # unspec
+    # XXX unspec
     def width
       case @pack
       when 'L' then 4
       when 'S' then 2
-      when /^a(\d+)$/ then $1
+      when /^a(\d+)$/ then $1.to_i
       when 'a*' then nil
       end
     end
