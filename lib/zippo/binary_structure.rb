@@ -11,7 +11,7 @@ module Zippo
       @io = StringIO.new @io if @io.is_a? String
     end
 
-    def unpack
+    def unpack2
       # XXX - group fixed fields
       self.class.structure.owner_class.new.tap do |obj|
         self.class.structure.fields.each do |field|
@@ -23,6 +23,21 @@ module Zippo
           end
         end
       end
+    end
+    def self.define_unpack_method
+      buf = "def unpack\n"
+      buf << "obj = self.class.structure.owner_class.new\n"
+      @structure.fields.each do |field|
+        if field.options[:size]
+          buf << %{obj.instance_variable_set "@#{field.name}", @io.read(obj.send :#{field.options[:size]})\n}
+        else
+          buf << %{buf = @io.read #{field.width || 0}\n}
+          buf << %{obj.instance_variable_set "@#{field.name}", buf.unpack("#{field.pack}").first\n}
+        end
+      end
+      buf << "obj\n"
+      buf << "end\n"
+      self.class_eval(buf)
     end
   end
   class BinaryPacker
@@ -45,6 +60,7 @@ module Zippo
       self::Packer.structure = @structure
       self.const_set :Unpacker, Class.new(BinaryUnpacker)
       self::Unpacker.structure = @structure
+      self::Unpacker.define_unpack_method
 
       @structure.fields.each do |field|
         attr_reader field.name
@@ -106,14 +122,16 @@ module Zippo
       @name = name
       @pack = pack
       @options = options
+      @width = StructureMember.width(@pack)
     end
     # XXX unspec
     def dependent
       options[:size]
     end
     # XXX unspec
-    def width
-      case @pack
+    attr_reader :width
+    def self.width(pack)
+      case pack
       when 'L' then 4
       when 'S' then 2
       when /^a(\d+)$/ then $1.to_i
