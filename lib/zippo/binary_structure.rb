@@ -11,8 +11,10 @@ module Zippo
       @io = StringIO.new @io if @io.is_a? String
     end
 
-    def unpack2
-      # XXX - group fixed fields
+    # default implementation
+    # note that this will generally be overridden by
+    # define_unpack_method for optimisation
+    def unpack
       self.class.structure.owner_class.new.tap do |obj|
         self.class.structure.fields.each do |field|
           if field.options[:size]
@@ -24,20 +26,46 @@ module Zippo
         end
       end
     end
+    # XXX - should write a spec for the "multiple helpers"
+    # implementation, none of the current binary structures would make
+    # use of it
     def self.define_unpack_method
       buf = "def unpack\n"
       buf << "obj = self.class.structure.owner_class.new\n"
+      helpers = []
+      field_buf = []
+      # iterate over the fields, gathering up the fixed fields in a
+      # group. once a variable field is hit, unpack the current group of
+      # fixed fields, then use that to read any variable fields. repeat.
       @structure.fields.each do |field|
         if field.options[:size]
-          buf << %{obj.instance_variable_set "@#{field.name}", @io.read(obj.send :#{field.options[:size]})\n}
+          # unpack fixed group
+          unless field_buf.empty?
+            s = field_buf.map(&:width).inject(&:+)
+            buf << %{arr = @io.read(#{s}).unpack("#{field_buf.map(&:pack).join('')}")\n}
+            helper_buf = ""
+            helpers << helper_buf
+            helper_buf << %{def binary_structure_unpack_helper_#{helpers.size-1}(#{0.upto(field_buf.size-1).map {|x| "a#{x}" }.join(", ")})\n}
+            field_buf.each_with_index do |f, i|
+              helper_buf << %{@#{f.name} = a#{i}\n}
+            end
+            helper_buf << %{end}
+            buf << "obj.binary_structure_unpack_helper_#{helpers.size-1}(*arr)\n"
+          end
+          # unpack variable
+          buf << %{obj.instance_variable_set :@#{field.name}, @io.read(obj.#{field.options[:size]})\n}
+          field_buf = []
         else
-          buf << %{buf = @io.read #{field.width || 0}\n}
-          buf << %{obj.instance_variable_set "@#{field.name}", buf.unpack("#{field.pack}").first\n}
+          field_buf << field
         end
       end
       buf << "obj\n"
       buf << "end\n"
+
       self.class_eval(buf)
+      helpers.each do |helper_buf|
+        @structure.owner_class.class_eval(helper_buf)
+      end
     end
   end
   class BinaryPacker
