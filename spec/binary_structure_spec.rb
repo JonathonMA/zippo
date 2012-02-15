@@ -8,7 +8,7 @@ module Zippo
   describe BinaryStructure do
     let(:klass) { Class.new }
     let(:obj) { klass.new }
-    let(:unpacker) { klass.unpacker }
+    let(:unpacker) { klass::Unpacker }
     before(:each) do
       klass.send :extend, BinaryStructure
     end
@@ -44,7 +44,7 @@ module Zippo
         array = [10,"baz", 42,"foobar baz"]
         packed = array.pack 'La4Sa*'
         io = StringIO.new packed
-        obj = klass.unpacker.new(io).unpack
+        obj = klass::Unpacker.new(io).unpack
         obj.foo.should eq 10
         obj.bar.should eq 42
         obj.quux.should eq "foobar baz"
@@ -53,7 +53,7 @@ module Zippo
         array = [3,"baz", 42,"foobar baz"]
         packed = array.pack 'La4Sa*'
         io = StringIO.new packed
-        obj = klass.unpacker.new(io).unpack
+        obj = klass::Unpacker.new(io).unpack
         obj.quux.should eq "foo"
       end
       it "should have a packer" do
@@ -63,7 +63,7 @@ module Zippo
         obj.bar = 42
         obj.yay = "baz"
         obj.quux = "foobar baz"
-        klass.packer.new(io).pack obj
+        klass::Packer.new(io).pack obj
         io.string.should eq packed
       end
       it "should have a .size method" do

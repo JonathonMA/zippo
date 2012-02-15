@@ -3,8 +3,8 @@ require "spec_helper"
 require "zippo/central_directory_unpacker"
 
 module Zippo
-  describe "EndCdRecord.unpacker" do
-    subject { EndCdRecord.unpacker.new(str).unpack }
+  describe "EndCdRecord::Unpacker" do
+    subject { EndCdRecord::Unpacker.new(str).unpack }
 
     context "when it's a simple file" do
       let(:str) { File.binread(test_file("test.zip"))[-22..-1] }

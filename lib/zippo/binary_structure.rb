@@ -41,10 +41,11 @@ module Zippo
   module BinaryStructure
     def binary_structure &block
       @structure = Structure.create(self, &block)
-      @unpacking_class = Class.new BinaryUnpacker
-      @unpacking_class.structure = @structure
-      @packing_class = Class.new BinaryPacker
-      @packing_class.structure = @structure
+      self.const_set :Packer, Class.new(BinaryPacker)
+      self::Packer.structure = @structure
+      self.const_set :Unpacker, Class.new(BinaryUnpacker)
+      self::Unpacker.structure = @structure
+
       @structure.fields.each do |field|
         attr_reader field.name
         if @structure.dependent? field.name
@@ -97,12 +98,6 @@ module Zippo
             obj.instance_variable_set "@#{field.name}", field.options[:default] if field.options[:default]
           end
         end
-      end
-      def packer
-        @packing_class
-      end
-      def unpacker
-        @unpacking_class
       end
     end
   end

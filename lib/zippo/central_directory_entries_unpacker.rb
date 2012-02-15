@@ -33,7 +33,7 @@ module Zippo
     def unpack
       [].tap do |entries|
         io = StringIO.new @str
-        while ! io.eof? && entry = CdFileHeader.unpacker.new(io).unpack
+        while ! io.eof? && entry = CdFileHeader::Unpacker.new(io).unpack
           entries << entry
         end
       end

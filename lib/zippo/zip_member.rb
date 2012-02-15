@@ -43,7 +43,7 @@ module Zippo
     private
     def local_file_header
       @io.seek @header.local_file_header_offset
-      LocalFileHeader.unpacker.new(@io).unpack
+      LocalFileHeader::Unpacker.new(@io).unpack
     end
 
     def seek_to_compressed_data
