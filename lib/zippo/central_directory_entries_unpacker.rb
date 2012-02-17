@@ -4,7 +4,7 @@ module Zippo
   class CdFileHeader
     SIGNATURE = 0x02014b50
     binary_structure do
-      field :signature, 'L', :default => SIGNATURE, :no_copy => true
+      field :signature, 'L', :signature => SIGNATURE
       field :version_made_by, 'S', :default => 0
       field :version_extractable_by, 'S', :default => 20
       field :bit_flags, 'S', :default => 0

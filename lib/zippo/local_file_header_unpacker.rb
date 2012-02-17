@@ -4,7 +4,7 @@ module Zippo
   class LocalFileHeader
     SIGNATURE = 0x04034b50
     binary_structure do
-      field :signature, 'L', :default => SIGNATURE
+      field :signature, 'L', :signature => SIGNATURE
       field :version_extractable_by, 'S', :default => 20
       field :bit_flags, 'S', :default => 0
       field :compression_method, 'S'

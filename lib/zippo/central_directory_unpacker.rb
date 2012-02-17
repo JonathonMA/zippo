@@ -6,7 +6,7 @@ module Zippo
     PACKED_SIGNATURE = [SIGNATURE].pack('L')
     MAX_COMMENT_LENGTH = 1<<16
     binary_structure do
-      field :signature, 'L', :default => SIGNATURE
+      field :signature, 'L', :signature => SIGNATURE
       field :disk, 'S', :default => 0
       field :cd_disk, 'S', :default => 0
       field :records, 'S'

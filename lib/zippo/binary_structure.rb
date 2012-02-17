@@ -140,6 +140,7 @@ module Zippo
         new.tap do |obj|
           structure.fields.each do |field|
             obj.instance_variable_set "@#{field.name}", field.options[:default] if field.options[:default]
+            obj.instance_variable_set "@#{field.name}", field.options[:signature] if field.options[:signature]
           end
         end
       end
