@@ -1,0 +1,34 @@
+module Zippo
+  module NullFilters
+    def filter(buf)
+      buf
+    end
+
+    def tail_filter
+      ""
+    end
+  end
+
+  module Filter
+    BLOCK_SIZE = 1 << 13
+    module ClassMethods
+      def filters
+        @filters_hash ||= Hash[@filters.map{|u| [u::METHOD, u]}]
+      end
+      def for(method)
+        return filters[method] if filters[method]
+        raise "unknown compression method #{method}"
+      end
+
+      def inherited(klass)
+        @filters << klass
+      end
+    end
+    def self.included(base)
+      base.class_eval do
+        @filters = []
+        extend ClassMethods
+      end
+    end
+  end
+end
