@@ -55,15 +55,15 @@ module Zippo
             raise "can't mutate a dependent field"
           end
         else
-          if dependent_field = field.dependent
-            define_method "#{field.name}=" do |value|
-              instance_variable_set "@#{dependent_field}", value.size
-              instance_variable_set "@#{field.name}", value
-            end
+          if field.dependent
+            class_eval """
+              def #{field.name}= value
+                @#{field.dependent} = value.size
+                @#{field.name} = value
+              end
+            """
           else
-            define_method "#{field.name}=" do |value|
-              instance_variable_set "@#{field.name}", value
-            end
+            attr_writer field.name
           end
         end
       end

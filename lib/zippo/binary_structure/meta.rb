@@ -79,13 +79,26 @@ module Zippo::BinaryStructure
         helper_name = "initialize_from_#{object_id}"
         define_helper(other, helper_name, common_fields)
 
-        klass.class_eval <<-_EOM_
+        default_fields = other.structure.fields.select do |field|
+          field.options[:default] || field.options[:signature]
+        end.reject do |field|
+          common_fields.include? field.name
+        end
+
+        define_helper(other, "other_fields", default_fields.map(&:name))
+        default_values = default_fields.map do |f|
+          f.options[:signature] ||
+          f.options[:default]
+        end
+
+        klass.class_eval """
           def #{meth}
-            obj = #{class_ref}.new.defaults
+            obj = #{class_ref}.new
+            obj.other_fields(#{default_values.map(&:inspect).join(', ')})
             #{call_helper("obj", helper_name, common_fields)}
             obj
           end
-        _EOM_
+        """
       end
 
       def define_pack_method_for klass
