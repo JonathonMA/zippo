@@ -6,32 +6,32 @@ module Zippo
     end
     def write
       File.open(@filename,'wb:ASCII-8BIT') do |io|
-
         packer = LocalFileHeader::Packer.new io
-        headers = @directory.map do |member|
-          CdFileHeader.default.tap do |header|
-            header.compression_method = 0 # XXX configurable
-            header.name = member.name
-            header.extra_field = "" # XXX extra field unimplemented
-            header_size = header.file_name_length + header.extra_field_length + 30
+        headers = []
+        for member in @directory
+          header = CdFileHeader.default
+          header.compression_method = 0 # XXX configurable
+          header.name = member.name
+          header.extra_field = "" # XXX extra field unimplemented
+          header_size = header.file_name_length + header.extra_field_length + 30
 
-            # record header position so we can write it later
-            header.local_file_header_offset = io.pos
+          # record header position so we can write it later
+          header.local_file_header_offset = io.pos
 
-            # move to after the header
-            io.seek header_size, IO::SEEK_CUR
+          # move to after the header
+          io.seek header_size, IO::SEEK_CUR
 
-            # write the compressed data
-            header.compressed_size,
-              header.uncompressed_size,
-              header.crc32 = member.write_to io
+          # write the compressed data
+          header.compressed_size,
+            header.uncompressed_size,
+            header.crc32 = member.write_to io
 
-            # write the completed header, returning to the current position
-            io.seek header.local_file_header_offset
-            #packer.pack LocalFileHeader.from header.convert_to LocalHileHeader
-            packer.pack header.convert_to LocalFileHeader
-            io.seek header.compressed_size, IO::SEEK_CUR
-          end
+          # write the completed header, returning to the current position
+          io.seek header.local_file_header_offset
+          #packer.pack LocalFileHeader.from header.convert_to LocalHileHeader
+          packer.pack header.convert_to LocalFileHeader
+          io.seek header.compressed_size, IO::SEEK_CUR
+          headers << header
         end
 
         eocdr = EndCdRecord.default
@@ -42,8 +42,7 @@ module Zippo
         end
         eocdr.cd_size = io.pos - eocdr.cd_offset
         eocdr.records = eocdr.total_records = headers.size
-        packer = EndCdRecord::Packer.new io
-        packer.pack eocdr
+        EndCdRecord::Packer.new(io).pack eocdr
       end
     end
   end
