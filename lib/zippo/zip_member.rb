@@ -5,12 +5,6 @@ require 'forwardable'
 
 module Zippo
   class ZipMember
-    def self.with_name_and_data name, data
-      header = CdFileHeader.new
-      header.name = name
-      new(nil, header)
-    end
-
     def initialize io, header
       @io = io
       @header = header
@@ -18,6 +12,10 @@ module Zippo
 
     def name
       @name ||= @header.name
+    end
+
+    def directory?
+      name.end_with? '/'
     end
 
     extend Forwardable
