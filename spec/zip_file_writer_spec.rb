@@ -16,7 +16,7 @@ module Zippo
           File.open("/home/jma/yay.zip","w") {|f| f.write File.read("out.zip") }
           Zippo.open("out.zip") do |f|
             f['file.ext'].crc32.should eq 0x8c736521
-            f['file.ext'].compressed_size.should eq 3
+            f['file.ext'].compressed_size.should eq 5
             f['file.ext'].uncompressed_size.should eq 3
             f['file.ext'].read.should eq "foo"
           end

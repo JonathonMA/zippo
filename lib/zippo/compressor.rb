@@ -1,3 +1,6 @@
+require 'zippo/filter'
+require 'zlib'
+
 module Zippo
   class Compressor
     include Filter

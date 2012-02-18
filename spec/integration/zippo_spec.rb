@@ -1,3 +1,4 @@
+# Encoding: BINARY
 require 'spec_helper'
 
 require 'zippo'

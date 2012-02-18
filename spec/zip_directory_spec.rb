@@ -22,11 +22,11 @@ module Zippo
     end
     end
     context "when inserting" do
-      let(:io) { StringIO.new }
+      let(:io) { StringIO.new "" }
       it "should allow the insertion of new members" do
         subject["new.file"] = "file data"
         subject["new.file"].read.should eq "file data"
-        subject["new.file"].write_to io
+        subject["new.file"].write_to io, 0
         io.string.should eq "file data"
       end
       it "should allow the insertion of IO objects" do
@@ -35,7 +35,7 @@ module Zippo
           file = File.open "xyzzy.txt"
           subject.insert "woo.txt", file
           subject["woo.txt"].read.should eq "plugh"
-          subject["woo.txt"].write_to io
+          subject["woo.txt"].write_to io, 0
           file.close
           io.string.should eq "plugh"
         end
@@ -45,15 +45,15 @@ module Zippo
           File.write "xyzzy.txt", "plugh"
           subject.insert "woo.txt", "xyzzy.txt"
           subject["woo.txt"].read.should eq "plugh"
-          subject["woo.txt"].write_to io
+          subject["woo.txt"].write_to io, 0
           io.string.should eq "plugh"
         end
       end
       it "should allow the insertion of ZipMember contents" do
-        zip = Zippo.open test_file "test.zip"
+        zip = Zippo::ZipFile.open test_file "test.zip"
         subject.insert "hmm.txt", zip['test.file']
         subject["hmm.txt"].read.should eq "The quick brown fox jumps over the lazy dog.\n"
-        subject["hmm.txt"].write_to io
+        subject["hmm.txt"].write_to io, 0
         zip.close
         io.string.should eq "The quick brown fox jumps over the lazy dog.\n"
         -> { subject["hmm.txt"].read }.should raise_error # after closing original zip

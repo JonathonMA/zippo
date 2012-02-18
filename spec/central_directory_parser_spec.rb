@@ -1,6 +1,7 @@
 require "spec_helper"
 
 require "zippo/central_directory_parser"
+require "zippo/zip_file"
 
 module Zippo
   describe CentralDirectoryParser do

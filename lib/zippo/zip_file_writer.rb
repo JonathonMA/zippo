@@ -10,7 +10,7 @@ module Zippo
         headers = []
         for member in @directory
           header = CdFileHeader.default
-          header.compression_method = 0 # XXX configurable
+          header.compression_method = 8 # XXX configurable
           header.name = member.name
           header.extra_field = "" # XXX extra field unimplemented
           header_size = header.file_name_length + header.extra_field_length + 30
@@ -24,7 +24,7 @@ module Zippo
           # write the compressed data
           header.compressed_size,
             header.uncompressed_size,
-            header.crc32 = member.write_to io
+            header.crc32 = member.write_to io, header.compression_method
 
           # write the completed header, returning to the current position
           io.seek header.local_file_header_offset

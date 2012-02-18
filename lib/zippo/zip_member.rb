@@ -1,5 +1,6 @@
 require 'zippo/local_file_header_unpacker'
-require 'zippo/uncompressor'
+require 'zippo/uncompressors'
+require 'zippo/compressors'
 
 require 'forwardable'
 
@@ -33,9 +34,17 @@ module Zippo
       end
     end
 
-    def write_to io
-      size = io.write read
-      return size, size, Zlib.crc32(read)
+    def write_to out, preferred_method = DeflateCompressor::METHOD, recompress = false
+      block_size = 4096
+      seek_to_compressed_data
+      if recompress
+        Compressor.for(preferred_method).new(uncompressor).compress_to(out)
+      else
+        n, rest = @header.compressed_size.divmod block_size
+        n.times { out.write(@io.read(block_size)) }
+        out.write(@io.read rest)
+        return @header.compressed_size, @header.uncompressed_size, @header.crc32
+      end
     end
 
     private

@@ -1,18 +1,19 @@
 require "spec_helper"
 
 require "zippo/io_zip_member"
+require "zippo/compressor/store"
 
 module Zippo
   describe IOZipMember do
     let(:io) { StringIO.new "foobar" }
-    let(:out) { StringIO.new }
+    let(:out) { StringIO.new "" }
     let(:name) { "name" }
     subject { IOZipMember.new name, io }
     specify { subject.name.should eq "name" }
     specify { subject.read.should eq "foobar" }
     context "when writing" do
       before(:each) do
-        @size, @csize, @crc32 = subject.write_to out
+        @size, @csize, @crc32 = subject.write_to out, 0
       end
       it "should write to the io" do
         out.string.should eq "foobar"
