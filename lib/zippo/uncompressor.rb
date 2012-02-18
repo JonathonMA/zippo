@@ -7,6 +7,11 @@ module Zippo
     def read n
       @io.read n
     end
+
+    def uncompress
+      StringIO.new.tap{|x| uncompress_to(x) }.string
+    end
+
     protected :read
     @@uncompressors = []
     def self.uncompressors

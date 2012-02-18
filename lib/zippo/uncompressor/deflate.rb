@@ -13,10 +13,6 @@ module Zippo
       @block_size = 1 << 13
     end
 
-    def uncompress
-      StringIO.new.tap{|x| uncompress_to(x) }.string
-    end
-
     def uncompress_to io
       n, rest = @compressed_size.divmod @block_size
       n.times { io << @zlib.inflate(read @block_size) }
