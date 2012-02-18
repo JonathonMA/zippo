@@ -27,6 +27,7 @@ module Zippo
         klass.structure.should have(4).fields
         klass.structure.fields[0].name.should eq :foo
         klass.structure.fields[3].options[:size].should eq :foo
+        klass.structure.fields[1].should be_signature
       end
       it "should have dependent fields" do
         obj.quux = "foobar"

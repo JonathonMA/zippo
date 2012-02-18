@@ -26,47 +26,6 @@ module Zippo
         end
       end
     end
-    # XXX - should write a spec for the "multiple helpers"
-    # implementation, none of the current binary structures would make
-    # use of it
-    def self.define_unpack_method
-      buf = "def unpack\n"
-      buf << "obj = self.class.structure.owner_class.new\n"
-      helpers = []
-      field_buf = []
-      # iterate over the fields, gathering up the fixed fields in a
-      # group. once a variable field is hit, unpack the current group of
-      # fixed fields, then use that to read any variable fields. repeat.
-      @structure.fields.each do |field|
-        if field.options[:size]
-          # unpack fixed group
-          unless field_buf.empty?
-            s = field_buf.map(&:width).inject(&:+)
-            buf << %{arr = @io.read(#{s}).unpack("#{field_buf.map(&:pack).join('')}")\n}
-            helper_buf = ""
-            helpers << helper_buf
-            helper_buf << %{def binary_structure_unpack_helper_#{helpers.size-1}(#{0.upto(field_buf.size-1).map {|x| "a#{x}" }.join(", ")})\n}
-            field_buf.each_with_index do |f, i|
-              helper_buf << %{@#{f.name} = a#{i}\n}
-            end
-            helper_buf << %{end}
-            buf << "obj.binary_structure_unpack_helper_#{helpers.size-1}(*arr)\n"
-          end
-          # unpack variable
-          buf << %{obj.instance_variable_set :@#{field.name}, @io.read(obj.#{field.options[:size]})\n}
-          field_buf = []
-        else
-          field_buf << field
-        end
-      end
-      buf << "obj\n"
-      buf << "end\n"
-
-      self.class_eval(buf)
-      helpers.each do |helper_buf|
-        @structure.owner_class.class_eval(helper_buf)
-      end
-    end
   end
   class BinaryPacker
     class << self
@@ -88,7 +47,6 @@ module Zippo
       self::Packer.structure = @structure
       self.const_set :Unpacker, Class.new(BinaryUnpacker)
       self::Unpacker.structure = @structure
-      self::Unpacker.define_unpack_method
 
       @structure.fields.each do |field|
         attr_reader field.name
@@ -111,8 +69,27 @@ module Zippo
       end
       include InstanceMethods
       extend ClassMethods
+      BinaryStructure.after_structure_definition_hooks_for(self)
+    end
+    class << self
+      def after_structure_definition_hooks_for(klass)
+        @hooks.each do |hook|
+          hook.call(klass)
+        end if @hooks
+      end
+      def after_structure_definition &block
+        @hooks ||= []
+        @hooks << block
+      end
     end
     module InstanceMethods
+      def defaults
+        self.class.structure.fields.each do |field|
+          instance_variable_set "@#{field.name}", field.options[:default] if field.options[:default]
+          instance_variable_set "@#{field.name}", field.options[:signature] if field.options[:signature]
+        end
+        self
+      end
       def size
         self.class.structure.fields.map do |field|
           if field.dependent
@@ -122,14 +99,11 @@ module Zippo
           end
         end.inject(&:+)
       end
+
       def convert_to other
         other.default.tap do |obj|
-          (self.class.structure.fields.map(&:name) & other.structure.fields.map(&:name)).each do |field|
-            if (fs = obj.class.structure.fields.detect {|f| f.name == field}).options[:signature]
-              obj.instance_variable_set "@#{field}", fs.options[:signature]
-            else
-              obj.instance_variable_set "@#{field}", send(field)
-            end
+          self.class.common_fields_with(other).each do |field|
+            obj.instance_variable_set "@#{field}", send(field)
           end
         end
       end
@@ -137,12 +111,15 @@ module Zippo
     module ClassMethods
       attr_reader :structure
       def default
-        new.tap do |obj|
-          structure.fields.each do |field|
-            obj.instance_variable_set "@#{field.name}", field.options[:default] if field.options[:default]
-            obj.instance_variable_set "@#{field.name}", field.options[:signature] if field.options[:signature]
-          end
-        end
+        new.defaults
+      end
+
+      # Returns the fields that this data type has in common with other
+      # common fields are field with the same name
+      # signature fields are never common
+      def common_fields_with(other)
+        structure.fields.map(&:name) &
+          other.structure.fields.reject(&:signature?).map(&:name)
       end
     end
   end
@@ -168,6 +145,10 @@ module Zippo
       end
     end
     attr_reader :name, :pack, :options
+
+    def signature?
+      options[:signature]
+    end
   end
   class Structure
     def self.create(owner_class, &block)

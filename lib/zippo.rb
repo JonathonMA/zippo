@@ -1,3 +1,6 @@
+# Ensure binary structure optimisations are active before any structures are defined
+require 'zippo/binary_structure/meta'
+
 require "zippo/version"
 require 'zippo/zip_file'
 require 'zippo/uncompressors'
