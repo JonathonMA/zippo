@@ -16,6 +16,11 @@ module Zippo
           zip['test.file'].should be_a ZipMember
           zip['test.file'].read.should eq "The quick brown fox jumps over the lazy dog.\n"
         end
+        it "should allow iterating over the directory" do
+          files = []
+          zip.each { |m| files << m.name }
+          files.should include("test.file")
+        end
       end
       context "when in write mode" do
         let(:mode) { "w" }

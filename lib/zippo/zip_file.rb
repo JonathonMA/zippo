@@ -1,6 +1,8 @@
 require 'zippo/zip_directory'
 require 'zippo/zip_file_writer'
 
+require 'forwardable'
+
 module Zippo
   class ZipFile
     def self.open(filename, mode = 'r')
@@ -14,10 +16,31 @@ module Zippo
       end
     end
 
-    def map &block
-      directory.map &block
+    def initialize(filename, mode)
+      @filename = filename
+      @mode = mode
     end
 
+    def close
+      @io.close if @io
+      if write?
+        writer = ZipFileWriter.new directory, @filename
+        writer.write
+      end
+    end
+
+    def directory
+      @directory ||= if read?
+        ZipDirectory.new io
+      else
+        ZipDirectory.new
+      end
+    end
+
+    extend Forwardable
+    def_delegators :directory, :map, :[], :[]=, :each
+
+    private
     def read?
       @mode.include? 'r'
     end
@@ -26,33 +49,8 @@ module Zippo
       @mode.include? 'w'
     end
 
-    def initialize(filename, mode)
-      @filename = filename
-      @mode = mode
-    end
-
-    def [](member_name)
-      directory[member_name]
-    end
-    def []= member_name, member_data
-      directory[member_name] = member_data
-    end
     def io
       @io ||= File.open(@filename, 'r:ASCII-8BIT')
-    end
-    def close
-      @io.close if @io
-      if write?
-        writer = ZipFileWriter.new directory, @filename
-        writer.write
-      end
-    end
-    def directory
-      @directory ||= if read?
-        ZipDirectory.new io
-      else
-        ZipDirectory.new
-      end
     end
   end
 end
