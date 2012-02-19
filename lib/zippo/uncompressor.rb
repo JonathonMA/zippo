@@ -30,7 +30,7 @@ module Zippo
     end
 
     def uncompress
-      StringIO.new.tap{|x| uncompress_to(x) }.string
+      uncompress_to ""
     end
   end
 end
