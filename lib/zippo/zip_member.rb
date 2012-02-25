@@ -20,7 +20,7 @@ module Zippo
     end
 
     extend Forwardable
-    def_delegators :@header, :crc32, :compressed_size, :uncompressed_size
+    def_delegators :@header, :crc32, :compressed_size, :uncompressed_size, :compression_method
 
     def read
       seek_to_compressed_data
@@ -35,14 +35,11 @@ module Zippo
     end
 
     def write_to out, preferred_method = DeflateCompressor::METHOD, recompress = false
-      block_size = 4096
       seek_to_compressed_data
       if recompress
         Compressor.for(preferred_method).new(uncompressor).compress_to(out)
       else
-        n, rest = @header.compressed_size.divmod block_size
-        n.times { out.write(@io.read(block_size)) }
-        out.write(@io.read rest)
+        IO.copy_stream @io, out, @header.compressed_size
         return @header.compressed_size, @header.uncompressed_size, @header.crc32
       end
     end
