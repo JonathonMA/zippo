@@ -11,6 +11,10 @@ module Zippo
         for member in @directory
           header = CdFileHeader.default
           header.compression_method = 8 # XXX configurable
+          # XXX hack fix for maintaining method in zipped data copies
+          if member.is_a? ZipMember
+            header.compression_method = member.compression_method
+          end
           header.name = member.name
           header.extra_field = "" # XXX extra field unimplemented
           header_size = header.file_name_length + header.extra_field_length + 30

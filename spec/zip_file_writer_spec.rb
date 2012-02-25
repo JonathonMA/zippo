@@ -22,6 +22,21 @@ module Zippo
           end
         end
       end
+      it "should perform direct zip copying" do
+        in_working_directory do
+          zip = Zippo.open(test_file "test.zip")
+          Zippo.open("out.zip", "w") do |out|
+            out.directory.insert 'out.file', zip['test.file']
+          end
+          zip.close
+
+          IO.write "/tmp/out.zip", IO.read("out.zip")
+
+          Zippo.open("out.zip") { |v| v['out.file'].read }.should eq "The quick brown fox jumps over the lazy dog.\n"
+        end
+      end
+      pending "should be able to peform direct zip copying after the source zip is closed"
+      pending "should be configurable in terms of compression method and effort"
     end
   end
 end
