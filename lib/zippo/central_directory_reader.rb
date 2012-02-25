@@ -1,10 +1,8 @@
-require 'zippo/central_directory_unpacker'
+require 'zippo/end_cd_record'
 require 'zippo/central_directory_entries_unpacker'
 
 module Zippo
-  class CentralDirectoryParser
-    MAX_COMMENT_LENGTH = 1<<16
-
+  class CentralDirectoryReader
     def initialize(io)
       @io = io
     end
@@ -14,19 +12,19 @@ module Zippo
     end
 
     def cd_file_headers
-      @cd_file_headers ||= CentralDirectoryEntriesUnpacker.new(read end_of_cd_record.cd_size, end_of_cd_record.cd_offset).unpack
+      @cd_file_headers ||= CentralDirectoryEntriesUnpacker.new(@io, end_of_cd_record.cd_size, end_of_cd_record.cd_offset).unpack
     end
 
     def end_of_cd_record_position
       # XXX implement optimised scanning at -22 position
       [44, 22].each do |pos|
+        next if pos > @io.size
         return @io.size - pos if (read 4, -pos) == EndCdRecord::PACKED_SIGNATURE
       end
 
-      scan_size = [@io.size, MAX_COMMENT_LENGTH].min
-      (@io.size - scan_size) + read_from(-scan_size).rindex(EndCdRecord::PACKED_SIGNATURE).tap do |pos|
-        raise "End of Central Directory Record not found" unless pos
-      end
+      scan_from = @io.size - EndCdRecord::MAX_COMMENT_LENGTH
+      scan_from = 0 if scan_from < 0
+      scan_from + (read_from(scan_from).rindex(EndCdRecord::PACKED_SIGNATURE) or raise "End of Central Directory Record not found")
     end
 
     private

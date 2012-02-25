@@ -1,6 +1,6 @@
 require "spec_helper"
 
-require "zippo/local_file_header_unpacker"
+require "zippo/local_file_header"
 
 module Zippo
   describe "LocalFileHeader::Unpacker" do

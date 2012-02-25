@@ -1,4 +1,4 @@
-require 'zippo/local_file_header_unpacker'
+require 'zippo/local_file_header'
 require 'zippo/uncompressors'
 require 'zippo/compressors'
 

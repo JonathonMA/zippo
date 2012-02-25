@@ -1,13 +1,13 @@
 require "spec_helper"
 
-require "zippo/central_directory_parser"
+require "zippo/central_directory_reader"
 require "zippo/zip_file"
 
 module Zippo
-  describe CentralDirectoryParser do
+  describe CentralDirectoryReader do
     let(:io) { File.open(file, "rb:ASCII-8BIT") }
       let(:file) { test_file "test.zip" }
-    let(:parser) { CentralDirectoryParser.new(io) }
+    let(:parser) { CentralDirectoryReader.new(io) }
     after(:each) { io.close }
 
     context "when parsing a simple file" do
@@ -33,7 +33,7 @@ module Zippo
 
     context "when parsing a file that is not a zip" do
       let(:file) { test_file "not_a.zip" }
-      specify { lambda {parser.end_of_cd_record_position}.should raise_error }
+      specify { -> {parser.end_of_cd_record_position}.should raise_error(/not found/) }
     end
 
     context "when parsing a zip file larger than the maximum comment size" do

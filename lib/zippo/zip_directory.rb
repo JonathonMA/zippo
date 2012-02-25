@@ -1,6 +1,6 @@
 require 'zippo/zip_member'
 require 'zippo/io_zip_member'
-require 'zippo/central_directory_parser'
+require 'zippo/central_directory_reader'
 require 'forwardable'
 
 module Zippo
@@ -38,7 +38,7 @@ module Zippo
     def entries_hash
       @entries_hash ||= if @io
         {}.tap do |hash|
-          CentralDirectoryParser.new(@io).cd_file_headers.each do |header|
+          CentralDirectoryReader.new(@io).cd_file_headers.each do |header|
             hash[header.name] = ZipMember.new @io, header
           end
         end

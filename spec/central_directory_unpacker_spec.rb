@@ -1,6 +1,6 @@
 require "spec_helper"
 
-require "zippo/central_directory_unpacker"
+require "zippo/end_cd_record"
 
 module Zippo
   describe "EndCdRecord::Unpacker" do

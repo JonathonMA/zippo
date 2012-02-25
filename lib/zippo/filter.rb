@@ -17,8 +17,7 @@ module Zippo
         @filters_hash ||= Hash[@filters.map{|u| [u::METHOD, u]}]
       end
       def for(method)
-        return filters[method] if filters[method]
-        raise "unknown compression method #{method}"
+        filters[method] or raise "unknown compression method #{method}"
       end
 
       def inherited(klass)
