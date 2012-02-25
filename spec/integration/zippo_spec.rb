@@ -39,7 +39,17 @@ module Zippo
         end
       end
 
-      pending "should update in place with mode rw"
+      it "should update in place with mode rw" do
+        in_working_directory do
+          Zippo.open("out.zip", "w")  { |v| v['foo1'] = "data1" }
+          Zippo.open("out.zip", "rw") { |v| v['foo2'] = "data2" }
+          IO.write "/tmp/bar.zip", IO.read("out.zip")
+          Zippo.open("out.zip") do |v|
+            v['foo1'].read.should eq "data1"
+            v['foo2'].read.should eq "data2"
+          end
+        end
+      end
     end
   end
 end

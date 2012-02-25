@@ -21,12 +21,16 @@ module Zippo
       @mode = mode
     end
 
+    extend Forwardable
+    def_delegators :directory, :map, :[], :[]=, :each
+
     def close
+      # In update mode, we first write the zip to a temporary zip file,
+      # then move it on top of the original file
+      out_zip = update? ? tmp_zipfile : @filename
+      ZipFileWriter.new(directory, out_zip).write if write?
       @io.close if @io
-      if write?
-        writer = ZipFileWriter.new directory, @filename
-        writer.write
-      end
+      File.rename out_zip, @filename if update?
     end
 
     def directory
@@ -37,20 +41,28 @@ module Zippo
       end
     end
 
-    extend Forwardable
-    def_delegators :directory, :map, :[], :[]=, :each
-
     private
     def read?
-      @mode.include? 'r'
+      File.exist? @filename and @mode.include? 'r'
     end
 
     def write?
       @mode.include? 'w'
     end
 
+    def update?
+      read? and write?
+    end
+
     def io
       @io ||= File.open(@filename, 'r:ASCII-8BIT')
+    end
+
+    def tmp_zipfile
+      # Not using Tempfile for performance
+      # Should probably throw a timestamp in there, in case multiple
+      # temps are being written at once from the one process
+      File.join File.dirname(@filename), ".zippo-tmp-#{Process.pid}-#{File.basename(@filename)}"
     end
   end
 end
