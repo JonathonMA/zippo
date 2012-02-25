@@ -1,4 +1,4 @@
-require 'zippo/binary_structure'
+require 'zippo/binary_structure/base'
 
 module Zippo::BinaryStructure
   module CodeGen
@@ -124,7 +124,7 @@ module Zippo::BinaryStructure
     end
   end
 
-  after_structure_definition do |klass|
+  Base.after_structure_definition do |klass|
     # Pre-define the .defaults method
     CodeGen.define_defaults_method_for klass
     # Pre-define the .unpack method
