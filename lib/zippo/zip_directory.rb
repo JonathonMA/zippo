@@ -7,38 +7,53 @@ module Zippo
   class ZipDirectory
     extend Forwardable
     include Enumerable
-    def_delegator :entries, :empty?
-    def_delegator :entries, :each
+    # should delegate to entries_hash instead of entries whenever we can
+    def_delegators :entries_hash, :empty?
+    def_delegators :entries, :each, :map
+
     def initialize io = nil
       @io = io
     end
 
     def [](name)
-      entries.detect {|x| x.name == name }
+      entries_hash[name]
     end
 
     def []=(name, string)
       insert(name, StringIO.new(string))
     end
 
+    # insert name, ZipMember to support copying zip data directly
+    # insert name, String to insert the contents of a file
+    # insert name, IO to insert the contents of an IO object
     def insert(name, source)
-      if source.is_a? ZipMember
-        entries << source.with_name(name)
-      elsif source.is_a? String
-        entries << IOZipMember.new(name, File.open(source, 'r:ASCII-8BIT'))
+      set name,
+        case source
+        when ZipMember then source.with_name name
+        when String then IOZipMember.new name, File.open(source, 'r:BINARY')
+        else IOZipMember.new name, source
+        end
+    end
+
+    def entries_hash
+      @entries_hash ||= if @io
+        {}.tap do |hash|
+          CentralDirectoryParser.new(@io).cd_file_headers.each do |header|
+            hash[header.name] = ZipMember.new @io, header
+          end
+        end
       else
-        entries << IOZipMember.new(name, source)
+        {}
       end
     end
 
     def entries
-      @entries ||= if @io
-        CentralDirectoryParser.new(@io).cd_file_headers.map do |header|
-          ZipMember.new @io, header
-        end
-      else
-        []
-      end
+      entries_hash.values
+    end
+
+    private
+    def set(name, member)
+      entries_hash[name] = member
     end
   end
 end
