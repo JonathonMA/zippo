@@ -13,19 +13,20 @@ module Zippo
     def read n, buf = nil
       if @remaining >= n
         @remaining -= n
-        @io.read n, buf
       elsif (n = @remaining) > 0
         @remaining = 0
-        @io.read n, buf
       else
         return nil
       end
+
+      @io.read n, buf
+      buf.replace filter(buf)
     end
 
     def uncompress_to io
       buf = ""
       while (read BLOCK_SIZE, buf)
-        io << filter(buf)
+        io << buf
       end
       io << tail_filter
     end
