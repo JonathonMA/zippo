@@ -71,7 +71,7 @@ module Zippo
     end
 
     extend Forwardable
-    def_delegators :directory, :map, :[], :[]=, :each
+    def_delegators :directory, :map, :[], :[]=, :each, :insert
 
     # Closes the ZipFile, writing it to disk if it was opened in write
     # mode
