@@ -1,8 +1,8 @@
 require "spec_helper"
 
-require "zippo/uncompressor/deflate"
+require "zippo/filter/uncompressor/deflate"
 
-module Zippo
+module Zippo::Filter
   describe DeflateUncompressor do
 
     let (:zstring) { Zlib::Deflate.new(Zlib::BEST_COMPRESSION, -Zlib::MAX_WBITS).deflate("a" * 20, Zlib::FINISH) }

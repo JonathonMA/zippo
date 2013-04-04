@@ -3,10 +3,13 @@ require 'zippo/binary_structure/meta'
 
 require "zippo/version"
 require 'zippo/zip_file'
-require 'zippo/uncompressors'
+require 'zippo/filter/uncompressors'
 
+# Zippo is a Zip library.
 module Zippo
   class << self
+    # Calls Zippo::ZipFile.open
+    # @see ZipFile.open
     def open filename, mode = 'r', &block
       Zippo::ZipFile.open filename, mode, &block
     end

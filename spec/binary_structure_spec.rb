@@ -101,6 +101,13 @@ module Zippo
         end
       end
     end
+    pending "should handle binary structures with multiple lots of fixed fields interspersed with variable length fields"
+    # none of the current binary structures use a
+    # feature like this, they're all a bunch of fixed
+    # fields followed by some variable length fields.
+    # need to test a few fixed fields, followed by a
+    # variable length field, then a few more fixed
+    # fields
 =begin
     it "should complain if the order is bad" do
       pending

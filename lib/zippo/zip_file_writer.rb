@@ -1,9 +1,14 @@
 module Zippo
+  # ZipFileWriter writes the contents of a ZipDirectory to a Zip file.
   class ZipFileWriter
+    # @param [ZipDirectory] directory the ZipDirectory to write
+    # @param [String] filename the filename to write to
     def initialize(directory, filename)
       @directory = directory
       @filename = filename
     end
+
+    # Writes the directory to the file.
     def write
       File.open(@filename,'wb:ASCII-8BIT') do |io|
         packer = LocalFileHeader::Packer.new io

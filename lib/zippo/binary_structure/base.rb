@@ -4,6 +4,32 @@ require 'zippo/binary_structure/binary_packer'
 require 'zippo/binary_structure/binary_unpacker'
 
 module Zippo
+  # BinaryStructure defines a class level DSL for
+  # implementing binary strucutures.
+  #
+  # The class will then have an ::Unpacker and ::Packer class
+  # defined underneath it that can be used to read and write
+  # the defined fields from an io.
+  #
+  # The DSL itself is fairly simple, fields are defined with
+  # a field name, "packing code" (per standard ruby
+  # Array#pack) and possibly options.
+  #
+  # - the :signature option indicates the field is a fixed
+  #   signature
+  # - the :size => <field> option indicates the field is a variable
+  #   width size field, with the size previously recorded in
+  #   the specified field
+  #
+  # @example
+  #    binary_structure do
+  #      field :foo, 'L'
+  #      field :yay, 'a4', :signature => "baz"
+  #      field :bar, 'S'
+  #      field :quux, 'a*', :size => :foo
+  #    end
+  #
+  # @see Array#pack
   module BinaryStructure
     module Base
       def binary_structure &block
@@ -79,9 +105,10 @@ module Zippo
           new.defaults
         end
 
-        # Returns the fields that this data type has in common with other
-        # common fields are field with the same name
-        # signature fields are never common
+        # Returns the fields that this data type has in common with other.
+        #
+        # - common fields are fields with the same name
+        # - signature fields are never common
         def common_fields_with(other)
           structure.fields.map(&:name) &
             other.structure.fields.reject(&:signature?).map(&:name)

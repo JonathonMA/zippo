@@ -1,9 +1,11 @@
 require 'zippo/binary_structure/base'
 
 module Zippo::BinaryStructure
+  # Profiling shows most of our time is spent iterating over various fields
+  # so let's unroll those loops in advance.
   module CodeGen
     class << self
-      # Defines a method on the specified class that takes sets the specified instance variables
+      # Defines a method on the specified class that sets a bunch of fields at once.
       def define_helper(klass, meth, fields)
         buf = []
         buf << "def #{meth}(#{0.upto(fields.size-1).map{|x|"a#{x}"}.join(',')})"
@@ -36,7 +38,8 @@ module Zippo::BinaryStructure
 
       # XXX - should write a spec for the "multiple helpers"
       # implementation, none of the current binary structures would make
-      # use of it
+      # use of it, as they all have a bunch of fixed fields,
+      # then the variable fields at the end. a test should 
       #def self.define_unpack_method
       def define_unpack_method_for(klass)
         buf = "def unpack\n"
@@ -129,7 +132,7 @@ module Zippo::BinaryStructure
     CodeGen.define_defaults_method_for klass
     # Pre-define the .unpack method
     CodeGen.define_unpack_method_for klass::Unpacker
-    # Pre-define the .unpack method
+    # Pre-define the .pack method
     CodeGen.define_pack_method_for klass::Packer
   end
 

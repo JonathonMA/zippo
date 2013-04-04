@@ -3,6 +3,7 @@ require 'zippo/cd_file_header'
 require 'stringio'
 
 module Zippo
+  # Unpacks an array of CdFileHeaders from an io stream
   class CentralDirectoryEntriesUnpacker
     def initialize(io, size, offset)
       @io = io

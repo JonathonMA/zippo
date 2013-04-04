@@ -1,9 +1,9 @@
 require "spec_helper"
 
-require "zippo/uncompressor"
-require "zippo/uncompressors"
+require "zippo/filter/uncompressor"
+require "zippo/filter/uncompressors"
 
-module Zippo
+module Zippo::Filter
   describe Uncompressor do
     it "should be a factory for uncompressors" do
       Uncompressor.for(0).should eq StoreUncompressor

@@ -1,7 +1,7 @@
 require "spec_helper"
 
 require "zippo/io_zip_member"
-require "zippo/compressor/store"
+require "zippo/filter/compressor/store"
 
 module Zippo
   describe IOZipMember do

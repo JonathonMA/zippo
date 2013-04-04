@@ -1,8 +1,8 @@
 require "spec_helper"
 
 require "zippo/zip_member"
-require "zippo/uncompressor/store"
-require "zippo/uncompressor/deflate"
+require "zippo/filter/uncompressor/store"
+require "zippo/filter/uncompressor/deflate"
 
 module Zippo
   describe ZipMember do

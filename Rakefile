@@ -1,10 +1,11 @@
 #!/usr/bin/env rake
-require "bundler/gem_tasks"
-require "rspec/core/rake_task"
+require 'bundler/gem_tasks'
+require 'rspec/core/rake_task'
+require 'yard'
+require './yard_extensions'
 
-desc "Default: run all specs"
 task :default => :spec
 
-desc "Run specs"
-RSpec::Core::RakeTask.new do |t|
-end
+RSpec::Core::RakeTask.new
+
+YARD::Rake::YardocTask.new

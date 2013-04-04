@@ -2,6 +2,7 @@ require 'zippo/end_cd_record'
 require 'zippo/central_directory_entries_unpacker'
 
 module Zippo
+  # Reads the zip central directory from an IO stream.
   class CentralDirectoryReader
     def initialize(io)
       @io = io

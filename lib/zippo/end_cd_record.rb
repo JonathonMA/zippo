@@ -1,6 +1,7 @@
 require 'zippo/binary_structure'
 
 module Zippo
+  # A zip end of central directory record.
   class EndCdRecord
     SIGNATURE = 0x06054b50
     PACKED_SIGNATURE = [SIGNATURE].pack('L')

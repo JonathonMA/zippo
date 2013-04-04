@@ -1,8 +1,8 @@
 require "spec_helper"
 
-require "zippo/compressor/store"
+require "zippo/filter/compressor/store"
 
-module Zippo
+module Zippo::Filter
   describe StoreCompressor do
     let (:data) { "a" * 20 }
     let (:io) { StringIO.new data }

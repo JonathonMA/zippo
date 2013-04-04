@@ -1,9 +1,9 @@
 # Encoding: BINARY
 require "spec_helper"
 
-require "zippo/compressor/deflate"
+require "zippo/filter/compressor/deflate"
 
-module Zippo
+module Zippo::Filter
   describe DeflateCompressor do
     let (:data) { "a" * 20 }
     let (:zdata) { "KL\xC4\u0004\u0000" }

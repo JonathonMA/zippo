@@ -1,9 +1,10 @@
-require 'zippo/uncompressor'
+require 'zippo/filter/uncompressor'
 
 require 'zlib'
 require 'stringio'
 
-module Zippo
+module Zippo::Filter
+  # Uncompresses the data using Zlib.
   class DeflateUncompressor < Uncompressor
     METHOD = 8
 
@@ -12,6 +13,7 @@ module Zippo
       @zlib = zlib
     end
 
+    private
     def filter(buf)
       @zlib.inflate(buf)
     end

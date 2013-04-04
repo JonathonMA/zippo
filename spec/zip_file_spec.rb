@@ -1,8 +1,8 @@
 require "spec_helper"
 
 require "zippo/zip_file"
-require "zippo/uncompressors"
-require "zippo/compressors"
+require "zippo/filter/uncompressors"
+require "zippo/filter/compressors"
 
 module Zippo
   describe ZipFile do

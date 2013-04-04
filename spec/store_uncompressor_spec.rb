@@ -1,8 +1,8 @@
 require "spec_helper"
 
-require "zippo/uncompressor/store"
+require "zippo/filter/uncompressor/store"
 
-module Zippo
+module Zippo::Filter
   describe StoreUncompressor do
     let(:io) { StringIO.new "foobarbazquux" }
     let (:out) { StringIO.new }

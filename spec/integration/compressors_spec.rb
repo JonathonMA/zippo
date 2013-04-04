@@ -1,11 +1,11 @@
 require "spec_helper"
 
-require "zippo/uncompressor"
-require "zippo/uncompressors"
-require "zippo/compressor"
-require 'zippo/compressors'
+require "zippo/filter/uncompressor"
+require "zippo/filter/uncompressors"
+require "zippo/filter/compressor"
+require 'zippo/filter/compressors'
 
-module Zippo
+module Zippo::Filter
   describe Uncompressor do
     let (:zstring) { Zlib::Deflate.new(Zlib::BEST_COMPRESSION, -Zlib::MAX_WBITS).deflate("a" * 20, Zlib::FINISH) }
     it "should allow uncompressors to work with compressors" do

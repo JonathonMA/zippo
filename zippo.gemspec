@@ -6,7 +6,8 @@ Gem::Specification.new do |gem|
   gem.email         = ["jma@dandaraga.net"]
   gem.summary       = %q{An (almost) pure-ruby Zip library}
   gem.description   = gem.summary
-  gem.homepage      = ""
+  gem.homepage      = "https://github.com/JonathonMA/zippo"
+  gem.license       = "MIT"
 
   gem.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   gem.files         = `git ls-files`.split("\n")
@@ -16,4 +17,7 @@ Gem::Specification.new do |gem|
   gem.version       = Zippo::VERSION
 
   gem.add_development_dependency  "rspec"
+  gem.add_development_dependency  "rake"
+  gem.add_development_dependency  "yard", '>= 0.8'
+  gem.add_development_dependency  "redcarpet"
 end
