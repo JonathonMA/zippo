@@ -9,16 +9,17 @@ module Zippo
       @io = io
     end
 
-    def read count = nil
-      @io.read count
+    def read count = nil, buf = nil
+      @io.read count, buf
     end
 
     def compress_to io
       data_size = 0
       compressed_size = 0
       crc32 = 0
-      while (buf = read(BLOCK_SIZE))
-        data_size += buf.size
+      buf = ""
+      while (read BLOCK_SIZE, buf)
+        data_size += buf.bytesize
         compressed_size += io.write filter(buf)
         crc32 = Zlib.crc32(buf, crc32)
       end

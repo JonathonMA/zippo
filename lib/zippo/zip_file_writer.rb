@@ -26,9 +26,8 @@ module Zippo
           io.seek header_size, IO::SEEK_CUR
 
           # write the compressed data
-          header.compressed_size,
-            header.uncompressed_size,
-            header.crc32 = member.write_to io, header.compression_method
+          header.compressed_size, header.uncompressed_size, header.crc32 =
+            member.write_to io, header.compression_method
 
           # write the completed header, returning to the current position
           io.seek header.local_file_header_offset

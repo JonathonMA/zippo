@@ -3,7 +3,7 @@ require 'zippo/compressor'
 module Zippo
   class DeflateCompressor < Compressor
     METHOD = 8
-    DEFAULT_COMPRESSION = Zlib::BEST_COMPRESSION
+    DEFAULT_COMPRESSION = Zlib::DEFAULT_COMPRESSION
 
     def initialize(io, compression_mode = DEFAULT_COMPRESSION)
       super(io)
@@ -15,7 +15,7 @@ module Zippo
     end
 
     def tail_filter
-      @zlib.finish
+      @zlib.finish unless @zlib.finished?
     end
   end
 end

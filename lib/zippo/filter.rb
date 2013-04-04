@@ -10,8 +10,8 @@ module Zippo
   end
 
   module Filter
-    # 256k block size seems to perform well in testing
-    BLOCK_SIZE = 1 << 18
+    # Use same block size as rubyzip for better comparison
+    BLOCK_SIZE = 131072
     module ClassMethods
       def filters
         @filters_hash ||= Hash[@filters.map{|u| [u::METHOD, u]}]

@@ -10,20 +10,21 @@ module Zippo
       @remaining = @compressed_size
     end
 
-    def read n
+    def read n, buf = nil
       if @remaining >= n
         @remaining -= n
-        @io.read n
+        @io.read n, buf
       elsif (n = @remaining) > 0
         @remaining = 0
-        @io.read n
+        @io.read n, buf
       else
         return nil
       end
     end
 
     def uncompress_to io
-      while (buf = read BLOCK_SIZE)
+      buf = ""
+      while (read BLOCK_SIZE, buf)
         io << filter(buf)
       end
       io << tail_filter

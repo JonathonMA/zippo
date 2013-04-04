@@ -23,7 +23,7 @@ module Zippo
             if field.dependent
               class_eval """
                 def #{field.name}= value
-                  @#{field.dependent} = value.size
+                  @#{field.dependent} = value.bytesize
                   @#{field.name} = value
                 end
               """
