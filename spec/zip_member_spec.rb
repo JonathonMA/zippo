@@ -9,9 +9,9 @@ module Zippo
     let(:io) { io_for "test.zip" }
     let(:cio) { io_for "deflate.zip" }
     let(:str) { "The quick brown fox jumps over the lazy dog.\n" }
-    let(:header) { stub(:header, name: "foo", compression_method: 0, compressed_size: 45, uncompressed_size: 45, crc32: 3947940970, local_file_header_offset: 0) }
-    let(:dheader) { stub(:header, name: "foo/") }
-    let(:cheader) { stub(:header, compression_method: 8, compressed_size: 37, local_file_header_offset: 0) }
+    let(:header) { double(:header, name: "foo", compression_method: 0, compressed_size: 45, uncompressed_size: 45, crc32: 3947940970, local_file_header_offset: 0) }
+    let(:dheader) { double(:header, name: "foo/") }
+    let(:cheader) { double(:header, compression_method: 8, compressed_size: 37, local_file_header_offset: 0) }
     it "should work" do
       member = ZipMember.new io, header
       member.read.should eq str
