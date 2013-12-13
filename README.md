@@ -1,6 +1,6 @@
 # Zippo
 
-Zippo is a fast zip library for ruby.
+Zippo is a blazingly fast zip library for ruby that just clicks.
 
 ## Installation
 
