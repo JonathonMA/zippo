@@ -34,9 +34,7 @@ module Zippo
       member = ZipMember.new cio, cheader
       member.read.should eq "Methinks it is like a weasel.\n" * 10
     end
-    it "should be able to write to an IO using a streaming approach" do
-      pending
-    end
+    pending "should be able to write to an IO using a streaming approach"
     pending "should be able to choose between recompressing or re-using the compressed data"
   end
 end
