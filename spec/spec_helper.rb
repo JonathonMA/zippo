@@ -1,3 +1,9 @@
+RSpec.configure do |config|
+  config.expect_with :rspec do |c|
+    c.syntax = [:should, :expect]
+  end
+end
+
 def io_for(filename)
   File.open test_file(filename), "rb:ASCII-8BIT"
 end
