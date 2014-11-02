@@ -11,7 +11,7 @@ module Zippo
       let(:offset) { 112 }
       let(:size) { 79 }
 
-      specify { subject.should have(1).items }
+      specify { subject.size.should eq 1 }
       specify { subject.first.name.should eq "test.file" }
     end
 
@@ -20,7 +20,7 @@ module Zippo
       let(:offset) { 242 }
       let(:size) { 158 }
 
-      specify { subject.should have(2).items }
+      specify { subject.size.should eq 2 }
       specify { subject[0].name.should eq "test.file" }
       specify { subject[1].name.should eq "other.test" }
     end

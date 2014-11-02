@@ -24,7 +24,7 @@ module Zippo
         end
       end
       it "should store field information in the class" do
-        klass.structure.should have(4).fields
+        klass.structure.fields.size.should eq 4
         klass.structure.fields[0].name.should eq :foo
         klass.structure.fields[3].options[:size].should eq :foo
         klass.structure.fields[1].should be_signature

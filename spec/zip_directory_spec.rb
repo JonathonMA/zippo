@@ -10,13 +10,13 @@ module Zippo
       subject { ZipDirectory.new io }
       context "when reading a simple file" do
         let(:file) { test_file "test.zip" }
-        it { should have(1).entries }
+        specify { subject.entries.size.should eq 1 }
         specify { subject["test.file"].should_not be_nil }
         it { should_not be_empty }
       end
       context "when reading a larger zip" do
         let(:file) { test_file "multi.zip" }
-        it { should have(2).entries }
+        specify { subject.entries.size.should eq 2 }
         specify { subject["test.file"].should_not be_nil }
         specify { subject["other.test"].should_not be_nil }
       end

@@ -17,7 +17,7 @@ module Zippo
       end
 
       specify { parser.end_of_cd_record_position.should eq 0xbf }
-      specify { parser.should have(1).cd_file_headers }
+      specify { parser.cd_file_headers.size.should eq 1 }
     end
 
     context "when parsing a file with a comment" do
