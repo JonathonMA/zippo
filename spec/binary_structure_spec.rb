@@ -1,6 +1,6 @@
 require "spec_helper"
 
-# TODO - spec that unpackers can take strings
+# TODO: - spec that unpackers can take strings
 
 require 'zippo/binary_structure'
 
@@ -17,9 +17,9 @@ module Zippo
         klass.class_eval do
           binary_structure do
             field :foo, 'L'
-            field :yay, 'a4', :signature => "baz"
+            field :yay, 'a4', signature: "baz"
             field :bar, 'S'
-            field :quux, 'a*', :size => :foo
+            field :quux, 'a*', size: :foo
           end
         end
       end
@@ -42,7 +42,7 @@ module Zippo
         obj.bar.should eq 10
       end
       it "should have an unpacker" do
-        array = [10,"baz", 42,"foobar baz"]
+        array = [10, "baz", 42, "foobar baz"]
         packed = array.pack 'La4Sa*'
         io = StringIO.new packed
         obj = klass::Unpacker.new(io).unpack
@@ -51,14 +51,14 @@ module Zippo
         obj.quux.should eq "foobar baz"
       end
       it "should unpack oversized strings correctly" do
-        array = [3,"baz", 42,"foobar baz"]
+        array = [3, "baz", 42, "foobar baz"]
         packed = array.pack 'La4Sa*'
         io = StringIO.new packed
         obj = klass::Unpacker.new(io).unpack
         obj.quux.should eq "foo"
       end
       it "should have a packer" do
-        array = [10,"baz", 42,"foobar baz"]
+        array = [10, "baz", 42, "foobar baz"]
         packed = array.pack 'La4Sa*'
         io = StringIO.new
         obj.bar = 42
@@ -79,7 +79,7 @@ module Zippo
           other_klass.class_eval do
             binary_structure do
               field :bar, 'S'
-              field :yay, 'a4', :signature => "quux"
+              field :yay, 'a4', signature: "quux"
             end
           end
         end
@@ -108,25 +108,23 @@ module Zippo
     # need to test a few fixed fields, followed by a
     # variable length field, then a few more fixed
     # fields
-=begin
-    it "should complain if the order is bad" do
-      pending
-      klass = Class.new BinaryStructure
-      lambda { klass.class_eval do
-        field :foo, 'S'
-        field :bar, 'a*', :size => :baz
-        field :baz, 'S'
-      end }.should raise_error "size not found"
-    end
-    it "should remain silent if the order is ok" do
-      pending
-      klass = Class.new BinaryStructure
-      lambda { klass.class_eval do
-        field :foo, 'S'
-        field :baz, 'S'
-        field :bar, 'a*', :size => :baz
-      end }.should_not raise_error
-    end
-=end
+    #     it "should complain if the order is bad" do
+    #       pending
+    #       klass = Class.new BinaryStructure
+    #       lambda { klass.class_eval do
+    #         field :foo, 'S'
+    #         field :bar, 'a*', :size => :baz
+    #         field :baz, 'S'
+    #       end }.should raise_error "size not found"
+    #     end
+    #     it "should remain silent if the order is ok" do
+    #       pending
+    #       klass = Class.new BinaryStructure
+    #       lambda { klass.class_eval do
+    #         field :foo, 'S'
+    #         field :baz, 'S'
+    #         field :bar, 'a*', :size => :baz
+    #       end }.should_not raise_error
+    #     end
   end
 end

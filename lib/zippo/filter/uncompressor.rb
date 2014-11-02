@@ -27,7 +27,7 @@ module Zippo::Filter
       @remaining = @compressed_size
     end
 
-    def read n, buf = nil
+    def read(n, buf = nil)
       if @remaining >= n
         @remaining -= n
       elsif (n = @remaining) > 0
@@ -43,11 +43,9 @@ module Zippo::Filter
     # Uncompresses the data to the specified IO
     #
     # @param [IO] io the object to uncompress to, must respond to #<<
-    def uncompress_to io
+    def uncompress_to(io)
       buf = ""
-      while (read BLOCK_SIZE, buf)
-        io << buf
-      end
+      io << buf while read BLOCK_SIZE, buf
       io << tail_filter
     end
 

@@ -35,7 +35,7 @@ module Zippo
           it "should write the file when closed" do
             zip.close
             Pathname.new(file).should exist
-            Zippo::ZipFile.open(file) {|f| f["new.file"].read }.should eq "foo"
+            Zippo::ZipFile.open(file) { |f| f["new.file"].read }.should eq "foo"
           end
         end
       end

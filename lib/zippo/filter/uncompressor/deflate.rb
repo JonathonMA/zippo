@@ -14,6 +14,7 @@ module Zippo::Filter
     end
 
     private
+
     def filter(buf)
       @zlib.inflate(buf)
     end

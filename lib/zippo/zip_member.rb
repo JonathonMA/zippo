@@ -7,7 +7,7 @@ require 'forwardable'
 module Zippo
   # A member of a Zip archive file.
   class ZipMember
-    def initialize io, header
+    def initialize(io, header)
       @io = io
       @header = header
     end
@@ -38,7 +38,7 @@ module Zippo
     #
     # @param [String] name the name to use
     # @return [ZipMember] the new ZipMember
-    def with_name name
+    def with_name(name)
       dup.tap do |obj|
         obj.instance_variable_set :@name, name
       end
@@ -53,7 +53,7 @@ module Zippo
     #
     # @return [Integer, Integer, Integer] the amount written, the
     #   original size of the data, the crc32 of the data
-    def write_to out, preferred_method = Filter::DeflateCompressor::METHOD, recompress = false
+    def write_to(out, preferred_method = Filter::DeflateCompressor::METHOD, recompress = false)
       seek_to_compressed_data
       if recompress
         Filter::Compressor.for(preferred_method).new(uncompressor).compress_to(out)
@@ -64,6 +64,7 @@ module Zippo
     end
 
     private
+
     def local_file_header
       @io.seek @header.local_file_header_offset
       LocalFileHeader::Unpacker.new(@io).unpack

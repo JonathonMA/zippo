@@ -17,7 +17,7 @@ module Zippo
         case pack
         when 'L' then 4
         when 'S' then 2
-        when /^a(\d+)$/ then $1.to_i
+        when /^a(\d+)$/ then Regexp.last_match[1].to_i
         when 'a*' then nil
         end
       end

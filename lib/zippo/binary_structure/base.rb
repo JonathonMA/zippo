@@ -32,18 +32,18 @@ module Zippo
   # @see Array#pack
   module BinaryStructure
     module Base
-      def binary_structure &block
+      def binary_structure(&block)
         @structure = Structure.create(self, &block)
-        self.const_set :Packer, Class.new(BinaryPacker)
+        const_set :Packer, Class.new(BinaryPacker)
         self::Packer.structure = @structure
-        self.const_set :Unpacker, Class.new(BinaryUnpacker)
+        const_set :Unpacker, Class.new(BinaryUnpacker)
         self::Unpacker.structure = @structure
 
         @structure.fields.each do |field|
           attr_reader field.name
           if @structure.dependent? field.name
-            define_method "#{field.name}=" do |value|
-              raise "can't mutate a dependent field"
+            define_method "#{field.name}=" do |_value|
+              fail "can't mutate a dependent field"
             end
           else
             if field.dependent
@@ -68,7 +68,8 @@ module Zippo
             hook.call(klass)
           end if @hooks
         end
-        def after_structure_definition &block
+
+        def after_structure_definition(&block)
           @hooks ||= []
           @hooks << block
         end
@@ -81,6 +82,7 @@ module Zippo
           end
           self
         end
+
         def size
           self.class.structure.fields.map do |field|
             if field.dependent
@@ -88,10 +90,10 @@ module Zippo
             else
               field.width
             end
-          end.inject(&:+)
+          end.reduce(&:+)
         end
 
-        def convert_to other
+        def convert_to(other)
           other.default.tap do |obj|
             self.class.common_fields_with(other).each do |field|
               obj.instance_variable_set "@#{field}", send(field)

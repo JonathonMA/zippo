@@ -7,10 +7,11 @@ module Zippo
       BLOCK_SIZE = 131072
       module ClassMethods
         def filters
-          @filters_hash ||= Hash[@filters.map{|u| [u::METHOD, u]}]
+          @filters_hash ||= Hash[@filters.map { |u| [u::METHOD, u] }]
         end
+
         def for(method)
-          filters[method] or raise "unknown compression method #{method}"
+          filters[method] or fail "unknown compression method #{method}"
         end
 
         def inherited(klass)

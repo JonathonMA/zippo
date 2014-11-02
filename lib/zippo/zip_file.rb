@@ -87,14 +87,16 @@ module Zippo
 
     # @return [ZipDirectory] the ZipDirectory
     def directory
-      @directory ||= if read?
-        ZipDirectory.new io
-      else
-        ZipDirectory.new
-      end
+      @directory ||=
+        if read?
+          ZipDirectory.new io
+        else
+          ZipDirectory.new
+        end
     end
 
     private
+
     def read?
       File.exist? @filename and @mode.include? 'r'
     end
@@ -104,7 +106,7 @@ module Zippo
     end
 
     def update?
-      read? and write?
+      read? && write?
     end
 
     def io

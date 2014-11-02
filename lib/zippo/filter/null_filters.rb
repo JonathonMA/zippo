@@ -3,6 +3,7 @@ module Zippo
     # Mixin for a no-op filter.
     module NullFilters
       protected
+
       def filter(buf)
         buf
       end

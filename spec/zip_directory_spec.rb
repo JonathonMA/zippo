@@ -5,21 +5,21 @@ require 'zippo/zip_file'
 module Zippo
   describe ZipDirectory do
     context "when opening a file" do
-    let(:io) { File.open(file, "rb:ASCII-8BIT") }
-    after(:each) { io.close }
-    subject { ZipDirectory.new io }
-    context "when reading a simple file" do
-      let(:file) { test_file "test.zip" }
-      it { should have(1).entries }
-      specify { subject["test.file"].should_not be_nil }
-      it { should_not be_empty }
-    end
-    context "when reading a larger zip" do
-      let(:file) { test_file "multi.zip" }
-      it { should have(2).entries }
-      specify { subject["test.file"].should_not be_nil }
-      specify { subject["other.test"].should_not be_nil }
-    end
+      let(:io) { File.open(file, "rb:ASCII-8BIT") }
+      after(:each) { io.close }
+      subject { ZipDirectory.new io }
+      context "when reading a simple file" do
+        let(:file) { test_file "test.zip" }
+        it { should have(1).entries }
+        specify { subject["test.file"].should_not be_nil }
+        it { should_not be_empty }
+      end
+      context "when reading a larger zip" do
+        let(:file) { test_file "multi.zip" }
+        it { should have(2).entries }
+        specify { subject["test.file"].should_not be_nil }
+        specify { subject["other.test"].should_not be_nil }
+      end
     end
     context "when inserting" do
       let(:io) { StringIO.new "" }

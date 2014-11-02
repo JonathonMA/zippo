@@ -4,7 +4,7 @@ require 'rspec/core/rake_task'
 require 'yard'
 require './yard_extensions'
 
-task :default => :spec
+task default: :spec
 
 RSpec::Core::RakeTask.new
 

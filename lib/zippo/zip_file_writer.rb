@@ -10,10 +10,10 @@ module Zippo
 
     # Writes the directory to the file.
     def write
-      File.open(@filename,'wb:ASCII-8BIT') do |io|
+      File.open(@filename, 'wb:ASCII-8BIT') do |io|
         packer = LocalFileHeader::Packer.new io
         headers = []
-        for member in @directory
+        @directory.each do |member|
           header = CdFileHeader.default
           header.compression_method = 8 # XXX configurable
           # XXX hack fix for maintaining method in zipped data copies
@@ -36,7 +36,7 @@ module Zippo
 
           # write the completed header, returning to the current position
           io.seek header.local_file_header_offset
-          #packer.pack LocalFileHeader.from header.convert_to LocalHileHeader
+          # packer.pack LocalFileHeader.from header.convert_to LocalHileHeader
           packer.pack header.convert_to LocalFileHeader
           io.seek header.compressed_size, IO::SEEK_CUR
           headers << header
@@ -45,7 +45,7 @@ module Zippo
         eocdr = EndCdRecord.default
         eocdr.cd_offset = io.pos
         packer = CdFileHeader::Packer.new io
-        for header in headers
+        headers.each do |header|
           packer.pack header
         end
         eocdr.cd_size = io.pos - eocdr.cd_offset

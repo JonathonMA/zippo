@@ -9,8 +9,8 @@ module Zippo
         @io = io
       end
 
-      def pack obj
-        @io << self.class.structure.fields.map {|f| obj.send f.name}.pack(self.class.structure.fields.map(&:pack).join(""))
+      def pack(obj)
+        @io << self.class.structure.fields.map { |f| obj.send f.name }.pack(self.class.structure.fields.map(&:pack).join(""))
       end
     end
   end

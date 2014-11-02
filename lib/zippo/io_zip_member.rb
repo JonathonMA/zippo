@@ -17,7 +17,7 @@ module Zippo
       @source.rewind
     end
 
-    def write_to out, preferred_compression_method = Filter::DeflateCompressor::METHOD, recompress = nil
+    def write_to(out, preferred_compression_method = Filter::DeflateCompressor::METHOD, _recompress = nil)
       Filter::Compressor.for(preferred_compression_method).new(@source).compress_to(out)
     end
   end
