@@ -24,7 +24,8 @@ module Zippo
 
       it "should work like File.open" do
         io = File.open(file)
-        File.should_receive(:open).with(file, 'r:ASCII-8BIT').and_return(io)
+        expect(File).to receive(:open)
+          .with(file, 'r:ASCII-8BIT').and_return(io)
         s = Zippo.open(file) { |v| v['test.file'].read }
         s.should eq member_data
         io.should be_closed
