@@ -8,7 +8,7 @@ module Zippo
       def initialize(owner_class, &block)
         @fields = []
         @owner_class = owner_class
-        instance_eval &block
+        instance_eval(&block)
       end
 
       def field(name, pack, options = {})

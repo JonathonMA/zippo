@@ -1,6 +1,6 @@
 require "spec_helper"
 
-# TODO - spec that unpackers can take strings
+# TODO: - spec that unpackers can take strings
 
 require 'zippo/binary_structure'
 

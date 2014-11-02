@@ -64,6 +64,7 @@ module Zippo
     end
 
     private
+
     def local_file_header
       @io.seek @header.local_file_header_offset
       LocalFileHeader::Unpacker.new(@io).unpack

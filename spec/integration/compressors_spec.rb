@@ -7,7 +7,7 @@ require 'zippo/filter/compressors'
 
 module Zippo::Filter
   describe Uncompressor do
-    let (:zstring) { Zlib::Deflate.new(Zlib::BEST_COMPRESSION, -Zlib::MAX_WBITS).deflate("a" * 20, Zlib::FINISH) }
+    let(:zstring) { Zlib::Deflate.new(Zlib::BEST_COMPRESSION, -Zlib::MAX_WBITS).deflate("a" * 20, Zlib::FINISH) }
     it "should allow uncompressors to work with compressors" do
       stream = StringIO.new zstring
       deflater = DeflateUncompressor.new(stream, zstring.size)

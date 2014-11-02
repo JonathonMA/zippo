@@ -58,13 +58,15 @@ module Zippo
     # @return [Hash] the hash of ZipMembers, the hash key is the
     #   member's name
     def entries_hash
-      @entries_hash ||= if @io
-                          CentralDirectoryReader.new(@io).cd_file_headers.each_with_object({}) do |header, hash|
-                            hash[header.name] = ZipMember.new @io, header
-                          end
-      else
-        {}
-      end
+      @entries_hash ||=
+        if @io
+          CentralDirectoryReader.new(@io)
+            .cd_file_headers.each_with_object({}) do |header, hash|
+              hash[header.name] = ZipMember.new @io, header
+            end
+        else
+          {}
+        end
     end
 
     # @return [Array] the members of the ZipFile
@@ -73,6 +75,7 @@ module Zippo
     end
 
     private
+
     def set(name, member)
       entries_hash[name] = member
     end

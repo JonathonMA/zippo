@@ -12,6 +12,7 @@ module Zippo::Filter
     end
 
     private
+
     def filter(buf)
       @zlib.deflate(buf)
     end

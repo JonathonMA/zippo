@@ -105,8 +105,6 @@ module Zippo::BinaryStructure
       end
 
       def define_pack_method_for(klass)
-        buf = []
-
         fields = klass.structure.fields.map(&:name)
         packing_string = klass.structure.fields.map(&:pack).join('')
 

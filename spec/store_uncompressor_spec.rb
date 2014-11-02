@@ -5,7 +5,7 @@ require "zippo/filter/uncompressor/store"
 module Zippo::Filter
   describe StoreUncompressor do
     let(:io) { StringIO.new "foobarbazquux" }
-    let (:out) { StringIO.new }
+    let(:out) { StringIO.new }
     it "should read only the specified amount" do
       io.seek 3
       StoreUncompressor.new(io, 3).uncompress.should eq "bar"

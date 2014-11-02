@@ -5,10 +5,10 @@ require "zippo/filter/compressor/deflate"
 
 module Zippo::Filter
   describe DeflateCompressor do
-    let (:data) { "a" * 20 }
-    let (:zdata) { "KL\xC4\u0004\u0000" }
-    let (:io) { StringIO.new data }
-    let (:out) { StringIO.new "" }
+    let(:data) { "a" * 20 }
+    let(:zdata) { "KL\xC4\u0004\u0000" }
+    let(:io) { StringIO.new data }
+    let(:out) { StringIO.new "" }
     it "should write the data" do
       compressor = DeflateCompressor.new(io)
       csize, size, crc32 = compressor.compress_to out

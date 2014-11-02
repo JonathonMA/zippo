@@ -29,6 +29,7 @@ module Zippo
     end
 
     private
+
     # reads size from the specified offset
     # if offset is negative, will offset from EOF
     def read(size, offset)

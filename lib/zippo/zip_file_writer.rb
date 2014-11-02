@@ -13,7 +13,7 @@ module Zippo
       File.open(@filename, 'wb:ASCII-8BIT') do |io|
         packer = LocalFileHeader::Packer.new io
         headers = []
-        for member in @directory
+        @directory.each do |member|
           header = CdFileHeader.default
           header.compression_method = 8 # XXX configurable
           # XXX hack fix for maintaining method in zipped data copies
@@ -45,7 +45,7 @@ module Zippo
         eocdr = EndCdRecord.default
         eocdr.cd_offset = io.pos
         packer = CdFileHeader::Packer.new io
-        for header in headers
+        headers.each do |header|
           packer.pack header
         end
         eocdr.cd_size = io.pos - eocdr.cd_offset

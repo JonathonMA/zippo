@@ -4,9 +4,9 @@ require "zippo/filter/compressor/store"
 
 module Zippo::Filter
   describe StoreCompressor do
-    let (:data) { "a" * 20 }
-    let (:io) { StringIO.new data }
-    let (:out) { StringIO.new }
+    let(:data) { "a" * 20 }
+    let(:io) { StringIO.new data }
+    let(:out) { StringIO.new }
     it "should write the data" do
       compressor = StoreCompressor.new(io)
       size, csize, crc32 = compressor.compress_to out

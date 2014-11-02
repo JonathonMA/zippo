@@ -45,9 +45,7 @@ module Zippo::Filter
     # @param [IO] io the object to uncompress to, must respond to #<<
     def uncompress_to(io)
       buf = ""
-      while read BLOCK_SIZE, buf
-        io << buf
-      end
+      io << buf while read BLOCK_SIZE, buf
       io << tail_filter
     end
 

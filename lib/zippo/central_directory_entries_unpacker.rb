@@ -15,10 +15,10 @@ module Zippo
     def unpack
       [].tap do |entries|
         @io.seek @offset
-        while @io.pos < @end && entry = CdFileHeader::Unpacker.new(@io).unpack
+        while @io.pos < @end && (entry = CdFileHeader::Unpacker.new(@io).unpack)
           entries << entry
         end
       end
     end
- end
+  end
 end
