@@ -10,7 +10,7 @@ module Zippo
   class << self
     # Calls Zippo::ZipFile.open
     # @see ZipFile.open
-    def open filename, mode = 'r', &block
+    def open(filename, mode = 'r', &block)
       Zippo::ZipFile.open filename, mode, &block
     end
     public :open

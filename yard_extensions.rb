@@ -5,6 +5,6 @@ class BinaryStructureHandler < YARD::Handlers::Ruby::Base
   namespace_only
 
   def process
-    parse_block(statement.last.last, :owner => namespace)
+    parse_block(statement.last.last, owner: namespace)
   end
 end

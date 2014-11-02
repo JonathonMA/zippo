@@ -11,6 +11,7 @@ module Zippo
       @offset = offset
       @end = @offset + @size
     end
+
     def unpack
       [].tap do |entries|
         @io.seek @offset

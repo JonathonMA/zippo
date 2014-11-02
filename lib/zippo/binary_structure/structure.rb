@@ -10,11 +10,13 @@ module Zippo
         @owner_class = owner_class
         instance_eval &block
       end
-      def field name, pack, options = {}
+
+      def field(name, pack, options = {})
         @fields << StructureMember.new(name, pack, options)
       end
-      def dependent? field_name
-        fields.detect do |field|
+
+      def dependent?(field_name)
+        fields.find do |field|
           field.options[:size] == field_name
         end
       end

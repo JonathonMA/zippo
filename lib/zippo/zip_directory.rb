@@ -13,7 +13,7 @@ module Zippo
     def_delegators :entries_hash, :empty?
     def_delegators :entries, :each, :map
 
-    def initialize io = nil
+    def initialize(io = nil)
       @io = io
     end
 
@@ -48,20 +48,20 @@ module Zippo
     # - another ZipMember (allowing direct stream copy)
     def insert(name, source)
       set name,
-        case source
-        when ZipMember then source.with_name name
-        when String then IOZipMember.new name, File.open(source, 'r:BINARY')
-        else IOZipMember.new name, source
-        end
+          case source
+          when ZipMember then source.with_name name
+          when String then IOZipMember.new name, File.open(source, 'r:BINARY')
+          else IOZipMember.new name, source
+          end
     end
 
     # @return [Hash] the hash of ZipMembers, the hash key is the
     #   member's name
     def entries_hash
       @entries_hash ||= if @io
-        CentralDirectoryReader.new(@io).cd_file_headers.each_with_object({}) do |header, hash|
-          hash[header.name] = ZipMember.new @io, header
-        end
+                          CentralDirectoryReader.new(@io).cd_file_headers.each_with_object({}) do |header, hash|
+                            hash[header.name] = ZipMember.new @io, header
+                          end
       else
         {}
       end

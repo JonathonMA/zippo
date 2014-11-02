@@ -8,7 +8,7 @@ module Zippo::BinaryStructure
       # Defines a method on the specified class that sets a bunch of fields at once.
       def define_helper(klass, meth, fields)
         buf = []
-        buf << "def #{meth}(#{0.upto(fields.size-1).map{|x|"a#{x}"}.join(',')})"
+        buf << "def #{meth}(#{0.upto(fields.size - 1).map { |x|"a#{x}" }.join(',')})"
         fields.each_with_index do |field, i|
           buf << "@#{field} = a#{i}"
         end
@@ -17,7 +17,7 @@ module Zippo::BinaryStructure
       end
 
       def fields_as_args(fields)
-        fields.map {|f| "@#{f}"}.join(", ")
+        fields.map { |f| "@#{f}" }.join(", ")
       end
 
       def call_helper(receiver, meth, fields)
@@ -28,8 +28,8 @@ module Zippo::BinaryStructure
         buf = []
         buf << "def defaults"
         klass.structure.fields.each do |field|
-          buf << %{@#{field.name} = #{field.options[:default].inspect}} if field.options[:default]
-          buf << %{@#{field.name} = #{field.options[:signature].inspect}} if field.options[:signature]
+          buf << %(@#{field.name} = #{field.options[:default].inspect}) if field.options[:default]
+          buf << %(@#{field.name} = #{field.options[:signature].inspect}) if field.options[:signature]
         end
         buf << "self"
         buf << "end"
@@ -39,8 +39,8 @@ module Zippo::BinaryStructure
       # XXX - should write a spec for the "multiple helpers"
       # implementation, none of the current binary structures would make
       # use of it, as they all have a bunch of fixed fields,
-      # then the variable fields at the end. a test should 
-      #def self.define_unpack_method
+      # then the variable fields at the end. a test should
+      # def self.define_unpack_method
       def define_unpack_method_for(klass)
         buf = "def unpack\n"
         buf << "obj = self.class.structure.owner_class.new\n"
@@ -53,7 +53,7 @@ module Zippo::BinaryStructure
           if field.options[:size]
             # unpack fixed group
             unless field_buf.empty?
-              s = field_buf.map(&:width).inject(&:+)
+              s = field_buf.map(&:width).reduce(&:+)
               buf << %{arr = @io.read(#{s}).unpack("#{field_buf.map(&:pack).join('')}")\n}
               helper_name = "binary_structure_unpack_helper_#{helper_num += 1}"
               define_helper(klass.structure.owner_class, helper_name, field_buf.map(&:name))
@@ -104,7 +104,7 @@ module Zippo::BinaryStructure
         """
       end
 
-      def define_pack_method_for klass
+      def define_pack_method_for(klass)
         buf = []
 
         fields = klass.structure.fields.map(&:name)
@@ -137,7 +137,7 @@ module Zippo::BinaryStructure
   end
 
   module InstanceMethods
-    def convert_to other
+    def convert_to(other)
       method = :"convert_to_#{other.object_id}"
       ::Zippo::BinaryStructure::CodeGen.define_converter_for(self.class, method, other) unless respond_to? method
       send method

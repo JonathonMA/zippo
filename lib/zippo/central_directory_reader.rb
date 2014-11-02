@@ -25,19 +25,19 @@ module Zippo
 
       scan_from = @io.size - EndCdRecord::MAX_COMMENT_LENGTH
       scan_from = 0 if scan_from < 0
-      scan_from + (read_from(scan_from).rindex(EndCdRecord::PACKED_SIGNATURE) or raise "End of Central Directory Record not found")
+      scan_from + (read_from(scan_from).rindex(EndCdRecord::PACKED_SIGNATURE) or fail "End of Central Directory Record not found")
     end
 
     private
     # reads size from the specified offset
     # if offset is negative, will offset from EOF
-    def read size, offset
+    def read(size, offset)
       @io.seek offset, (offset < 0 ? IO::SEEK_END : IO::SEEK_SET)
       @io.read size
     end
 
     # reads from the specified offset until EOF
-    def read_from offset
+    def read_from(offset)
       read nil, offset
     end
   end

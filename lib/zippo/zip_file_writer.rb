@@ -10,7 +10,7 @@ module Zippo
 
     # Writes the directory to the file.
     def write
-      File.open(@filename,'wb:ASCII-8BIT') do |io|
+      File.open(@filename, 'wb:ASCII-8BIT') do |io|
         packer = LocalFileHeader::Packer.new io
         headers = []
         for member in @directory
@@ -36,7 +36,7 @@ module Zippo
 
           # write the completed header, returning to the current position
           io.seek header.local_file_header_offset
-          #packer.pack LocalFileHeader.from header.convert_to LocalHileHeader
+          # packer.pack LocalFileHeader.from header.convert_to LocalHileHeader
           packer.pack header.convert_to LocalFileHeader
           io.seek header.compressed_size, IO::SEEK_CUR
           headers << header

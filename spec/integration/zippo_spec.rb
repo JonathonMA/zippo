@@ -33,9 +33,9 @@ module Zippo
       it "should create zip files" do
         in_working_directory do
           File.write "xyzzy.txt", "plugh"
-          Zippo.open("new.zip", "w") {|v| v['xyzzy.txt'] = "plugh" }
+          Zippo.open("new.zip", "w") { |v| v['xyzzy.txt'] = "plugh" }
           Pathname.new("new.zip").should exist
-          Zippo.open("new.zip") {|v| v['xyzzy.txt'].read }.should eq "plugh"
+          Zippo.open("new.zip") { |v| v['xyzzy.txt'].read }.should eq "plugh"
         end
       end
 

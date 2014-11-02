@@ -6,7 +6,7 @@ require "zippo/zip_file"
 module Zippo
   describe CentralDirectoryReader do
     let(:io) { File.open(file, "rb:ASCII-8BIT") }
-      let(:file) { test_file "test.zip" }
+    let(:file) { test_file "test.zip" }
     let(:parser) { CentralDirectoryReader.new(io) }
     after(:each) { io.close }
 
@@ -33,7 +33,7 @@ module Zippo
 
     context "when parsing a file that is not a zip" do
       let(:file) { test_file "not_a.zip" }
-      specify { -> {parser.end_of_cd_record_position}.should raise_error(/not found/) }
+      specify { -> { parser.end_of_cd_record_position }.should raise_error(/not found/) }
     end
 
     context "when parsing a zip file larger than the maximum comment size" do
@@ -42,7 +42,7 @@ module Zippo
           Zippo::ZipFile.open("large.zip", "w") do |v|
             v["test.file"] = "a" * 65535
           end
-          Zippo::ZipFile.open("large.zip") {|v| v["test.file"].read }.should eq "a" * 65535
+          Zippo::ZipFile.open("large.zip") { |v| v["test.file"].read }.should eq "a" * 65535
         end
       end
     end
