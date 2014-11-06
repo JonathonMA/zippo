@@ -1,5 +1,7 @@
 # Zippo
 
+[![Build Status](https://travis-ci.org/JonathonMA/zippo.svg?branch=master)](https://travis-ci.org/JonathonMA/zippo)
+
 Zippo is a fast zip library for ruby.
 
 A [benchmark](https://gist.github.com/JonathonMA/7943484) is available.
