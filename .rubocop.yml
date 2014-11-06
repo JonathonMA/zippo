@@ -1,11 +1,17 @@
-Style/Documentation:
-  Enabled: false
-
-Style/LineLength:
+Metrics/LineLength:
   Max: 164
 
-Style/MethodLength:
+Metrics/MethodLength:
   Max: 31
+
+Metrics/AbcSize:
+  Max: 46
+
+Style/StringLiteralsInInterpolation:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
 
 Style/NumericLiterals:
   Enabled: false
@@ -20,4 +26,10 @@ Style/AndOr:
   Enabled: false
 
 Style/MultilineBlockChain:
+  Enabled: false
+
+Style/TrailingComma:
+  EnforcedStyleForMultiline: comma
+
+Style/MultilineOperationIndentation:
   Enabled: false
