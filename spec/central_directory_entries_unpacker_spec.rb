@@ -24,6 +24,5 @@ module Zippo
       specify { subject[0].name.should eq "test.file" }
       specify { subject[1].name.should eq "other.test" }
     end
-
   end
 end

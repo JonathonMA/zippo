@@ -26,6 +26,5 @@ module Zippo
       specify { subject.total_records.should eq 1 }
       specify { subject.comment.should eq "this is a comment to make things tricky" }
     end
-
   end
 end

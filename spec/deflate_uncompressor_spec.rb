@@ -4,7 +4,6 @@ require "zippo/filter/uncompressor/deflate"
 
 module Zippo::Filter
   describe DeflateUncompressor do
-
     let(:zstring) { Zlib::Deflate.new(Zlib::BEST_COMPRESSION, -Zlib::MAX_WBITS).deflate("a" * 20, Zlib::FINISH) }
     let(:size) { zstring.size }
     let(:string) { "aaa" + zstring + "bbb" }
