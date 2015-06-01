@@ -30,7 +30,7 @@ module Zippo
       field :local_file_header_offset, 'L'
       field :name, 'a*', size: :file_name_length
       field :extra_field, 'a*', size: :extra_field_length, default: ''
-      field :comment, 'a*', default: '', size: :file_comment_length, default: ''
+      field :comment, 'a*', size: :file_comment_length, default: ''
     end
   end
 end
